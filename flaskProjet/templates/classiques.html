@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css" >
+    <script type="text/javascript" src="../static/choisir.js"> </script>
+</head>
+<body>
+    <h1>  listes de jeux classiques </h1>
+        {% for l in liste %}
+           <p style="text-align: center">{{l}}</p>
+        {% endfor %}
+
+    <div>
+		<button class= "button button2" onclick="choisirJeu()"> Choisir jeux </button>
+
+	</div>
+    <div id="enteteChoix" > </div>
+        <div id="contenuOption">
+              <select name="selJeu" id="selJeu" > </select>
+        </div>
+</body>
+</html>

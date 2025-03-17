@@ -1,0 +1,83 @@
+﻿
+H1{ 
+	
+	text-align:center;
+	
+}
+
+H3 {
+	color:red;
+  }
+
+.button {
+  background-color: #04AA6D; /* Green */
+  border: none;
+  color: white;
+  padding: 22px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 16px 16px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.button2 {
+  background-color: #555555; /* GRAY */
+  
+}
+
+.button3 {
+  background-color: blue; /* BLUE */
+  
+}
+
+.button4 {
+  background-color: #008CBA; /* BLUE */
+  
+}
+
+.btn-group .button5 {
+  background-color:Gray; /* GrAY */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display:inline-block;
+  font-size: 16px;
+  
+  cursor: pointer;
+  border-radius: 10px;
+}
+DIV {
+	text-align:center;
+}
+
+
+#affichage {
+			width: 90%;
+			display: inline-block;
+			font-size: 1.1em;
+		}
+		
+.cat {
+			width: 40%;
+			display: inline-block;
+			margin-top: 100px;
+			//margin-left:125px;
+			padding: 0px;
+		}
+
+.conteneur {
+
+	width:1400px;
+	
+	
+	margin-right:auto;
+	margin-left:auto;
+	
+	
+}
+
