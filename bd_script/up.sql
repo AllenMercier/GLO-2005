@@ -45,6 +45,6 @@ CREATE TABLE IF NOT EXISTS Location_jeux (  id_location INT,
                                             PRIMARY KEY (id_location, id_jeu),
                                             FOREIGN KEY (id_location) REFERENCES Locations(id_location) ON DELETE CASCADE,
                                             FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE);
-                                            
+
 
 
