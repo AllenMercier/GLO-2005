@@ -1,41 +1,137 @@
 from typing import Any
-
 from flask import Flask, render_template
 import pymysql
 import pymysql.cursors
-conn= pymysql.connect(host='localhost',user='root',password='12345',db='projet_glo_2005')
+from faker import Faker
+import random
+from datetime import timedelta
+
+# Connexion à MySQL local
+conn = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='K@mwanga17071997',
+    db='projet'
+)
 cursor = conn.cursor()
 
-requete = "SELECT * FROM jeux;"
+# ----------- Peuplement de la base -----------
+faker = Faker()
+NB_ENTREES = 300
 
+# Utilisateurs
+user_ids = []
+for _ in range(NB_ENTREES):
+    cursor.execute(
+        "INSERT INTO Utilisateurs (Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut) VALUES (%s, %s, %s, %s, %s, %s)",
+        (
+            faker.last_name(),
+            faker.first_name(),
+            f"{faker.user_name()}{random.randint(1000, 999999)}@example.com",
+            faker.date_of_birth(minimum_age=18, maximum_age=60),
+            faker.password(),
+            random.choice([0, 1])
+        )
+    )
+    user_ids.append(cursor.lastrowid)
+
+# Jeux
+jeu_ids = []
+categories = ['Classique', 'Console', 'Ordinateur', 'Equipement']  # avec accent
+for _ in range(NB_ENTREES):
+    cursor.execute(
+        "INSERT INTO Jeux (Nom, Categorie, Prix, Quantite) VALUES (%s, %s, %s, %s)",
+        (
+            faker.word().capitalize(),
+            random.choice(categories),
+            round(random.uniform(5, 30), 2),
+            random.randint(1, 10)
+        )
+    )
+    jeu_ids.append(cursor.lastrowid)
+
+# Locations
+location_ids = []
+for _ in range(NB_ENTREES):
+    id_user = random.choice(user_ids)
+    cursor.execute("INSERT INTO Locations (id_user) VALUES (%s)", (id_user,))
+    location_ids.append(cursor.lastrowid)
+
+# Location_jeux avec paires (id_location, id_jeu) uniques
+used_pairs = set()
+while len(used_pairs) < NB_ENTREES:
+    id_location = random.choice(location_ids)
+    id_jeu = random.choice(jeu_ids)
+    pair = (id_location, id_jeu)
+    if pair in used_pairs:
+        continue
+    used_pairs.add(pair)
+
+    quantite = random.randint(1, 3)
+    duree = random.randint(1, 10)
+    prix = round(random.uniform(5, 50), 2)
+    penalite = round(random.uniform(0, 10), 2)
+    date_debut = faker.date_this_year()
+    date_retour_prevu = date_debut + timedelta(days=duree)
+    date_retournee = date_retour_prevu + timedelta(days=random.choice([0, 1, -1]))
+    cursor.execute("""
+        INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Penalite, Date_debut, Date_retour_prevu, Date_retournee)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """, (
+        id_location, id_jeu, quantite, duree, prix,
+        penalite, date_debut, date_retour_prevu, date_retournee
+    ))
+
+# Factures
+facture_ids = []
+for id_location in location_ids[:NB_ENTREES]:
+    date_facture = faker.date_this_year()
+    montant = round(random.uniform(20, 100), 2)
+    cursor.execute(
+        "INSERT INTO Factures (id_location, Date_facture, montant_total) VALUES (%s, %s, %s)",
+        (id_location, date_facture, montant)
+    )
+    facture_ids.append(cursor.lastrowid)
+
+# Paiments
+for _ in range(NB_ENTREES):
+    id_facture = random.choice(facture_ids)
+    id_user = random.choice(user_ids)
+    no_carte = faker.credit_card_number()
+    banque = random.choice(['RBC', 'Desjardins', 'National Bank', 'Tangerine', 'BMO'])
+    date_paiement = faker.date_this_year()
+    cursor.execute("""
+        INSERT INTO Paiments (id_facture, id_user, No_carte, Banque, Date_paiment)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (id_facture, id_user, no_carte, banque, date_paiement))
+
+conn.commit()
+print("✅ 300 entrées insérées dans chaque table avec succès.")
+
+# ----------- Récupération des jeux "classique" -----------
+requete = "SELECT * FROM jeux;"
 cursor.execute(requete)
 resultat = cursor.fetchall()
 liste1 = []
 for tuple in resultat:
-   #for attrib in tuple:
-    if "classiques" == tuple[2]:
-     #print(tuple[1] , end=' ')
-      liste1.append(tuple[1])
-print('\n')
+    if "classique" in tuple[2].lower():
+        liste1.append(tuple[1])
+
+print('\n🎮 Jeux classiques :')
 print(liste1)
 
 cursor.close()
-# conn.close()
+
+# ----------- Application Flask -----------
 app = Flask(__name__)
 
 @app.route('/')
-
 def main():
-
     return render_template('acceuil.html')
-@app.route("/liste")
 
+@app.route('/liste')
 def liste():
-
     return render_template('classiques.html', liste=liste1)
-
-
-
 
 if __name__ == '__main__':
     app.run(port=8080)

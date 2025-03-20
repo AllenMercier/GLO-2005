@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (   id_user INT PRIMARY KEY AUTO_INCREME
 
 CREATE TABLE IF NOT EXISTS Jeux (       id_jeu INT AUTO_INCREMENT PRIMARY KEY,
                                         Nom VARCHAR(50), 
-                                        Categorie ENUM('Classique', 'Console', 'Ordinateur', 'Équipement'),
+                                        Categorie ENUM('Classique', 'Console', 'Ordinateur', 'Equipement'),
                                         Prix Double,
                                         Quantite INT);
 
@@ -36,12 +36,12 @@ CREATE TABLE IF NOT EXISTS Paiments (   id_paiment INT PRIMARY KEY AUTO_INCREMEN
 CREATE TABLE IF NOT EXISTS Location_jeux (  id_location INT,
                                             id_jeu INT,
                                             Quantite INT,
-                                            Durée INT,
+                                            Duree INT,
                                             Prix DOUBLE,
-                                            Prenalité Double,
+                                            Penalite Double,
                                             Date_debut DATE,
                                             Date_retour_prevu DATE,
-                                            Date_retournée DATE,
+                                            Date_retournee DATE,
                                             PRIMARY KEY (id_location, id_jeu),
                                             FOREIGN KEY (id_location) REFERENCES Locations(id_location) ON DELETE CASCADE,
                                             FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE);

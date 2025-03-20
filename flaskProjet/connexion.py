@@ -1,6 +1,6 @@
 import pymysql
 import pymysql.cursors
-conn= pymysql.connect(host='localhost',user='root',password='1234',db='projet_glo_2005')
+conn= pymysql.connect(host='localhost',user='root',password='K@mwanga17071997',db='projet')
 cursor = conn.cursor()
 
 requete = "SELECT * FROM classiques;"

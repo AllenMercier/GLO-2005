@@ -13,6 +13,7 @@ class Database:
 
         self.host = os.environ.get("HOST")
         self.port = int(os.environ.get("PORT"))
+        self.user = os.environ.get("USER")
         self.database = os.environ.get("DATABASE")
         self.password = os.environ.get("PASSWORD")
 
@@ -23,6 +24,7 @@ class Database:
         self.connection = pymysql.connect(
             host=self.host,
             port=self.port,
+            user=self.user,
             password=self.password,
             db=self.database,
             autocommit=True
