@@ -4,14 +4,19 @@ import pymysql
 import pymysql.cursors
 from faker import Faker
 import random
+from dotenv import load_dotenv
 from datetime import timedelta
+import os
+
+# Connexion à MySQL local
+load_dotenv()
 
 # Connexion à MySQL local
 conn = pymysql.connect(
-    host='localhost',
-    user='root',
-    password='K@mwanga17071997',
-    db='projet'
+    host=os.environ.get("HOST"),
+    user=os.environ.get("USER"),
+    password=os.environ.get("PASSWORD"),
+    db=os.environ.get("DATABASE")
 )
 cursor = conn.cursor()
 
@@ -108,19 +113,14 @@ for _ in range(NB_ENTREES):
 conn.commit()
 print("✅ 300 entrées insérées dans chaque table avec succès.")
 
-# ----------- Récupération des jeux "classique" -----------
-requete = "SELECT * FROM jeux;"
-cursor.execute(requete)
-resultat = cursor.fetchall()
-liste1 = []
-for tuple in resultat:
-    if "classique" in tuple[2].lower():
-        liste1.append(tuple[1])
+# ----------- Récupération des jeux par catégorie -----------
+def get_jeux_par_catégorie(categorie):
+    requete = "SELECT Nom FROM jeux WHERE Categorie= %s;"
+    cursor.execute(requete, (categorie,))
+    resultat = cursor.fetchall()
+    return [tuple[0] for tuple in resultat] 
 
-print('\n🎮 Jeux classiques :')
-print(liste1)
 
-cursor.close()
 
 # ----------- Application Flask -----------
 app = Flask(__name__)
@@ -131,7 +131,21 @@ def main():
 
 @app.route('/liste')
 def liste():
-    return render_template('classiques.html', liste=liste1)
+    return render_template('classiques.html', liste=get_jeux_par_catégorie('Classique'))
+
+@app.route('/console')
+def console():
+    return render_template('consoles.html', liste=get_jeux_par_catégorie('Console'))
+
+@app.route('/ordinateur')
+def ordinateur():
+    return render_template('ordinateur.html', liste=get_jeux_par_catégorie('Ordinateur'))
+
+@app.route('/equipement')
+def equipement():
+    return render_template('equipement.html', liste=get_jeux_par_catégorie('Equipement'))
+
+
 
 if __name__ == '__main__':
-    app.run(port=8080)
+    app.run(debug=True, port=8080)
