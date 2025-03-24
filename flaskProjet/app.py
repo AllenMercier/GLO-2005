@@ -111,7 +111,7 @@ for _ in range(NB_ENTREES):
     """, (id_facture, id_user, no_carte, banque, date_paiement))
 
 conn.commit()
-print("✅ 300 entrées insérées dans chaque table avec succès.")
+print(" 300 entrées insérées dans chaque table avec succès.")
 
 # ----------- Récupération des jeux par catégorie -----------
 def get_jeux_par_catégorie(categorie):
