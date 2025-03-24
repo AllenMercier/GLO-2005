@@ -1,3 +1,4 @@
+-- Active: 1739460525589@@127.0.0.1@3306@projet
 USE projet;
 DELIMITER //
 CREATE PROCEDURE louer (
@@ -52,6 +53,12 @@ BEGIN
     IF l_quantite_disponible < l_quantite_desiree THEN
         SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = 'Quantité en stock inssufisante';
     ELSE
+        
+        /* si id_location rien est inséré dans la table Locations */
+        IF NOT EXISTS (SELECT l_id_location FROM locations WHERE id_location = l_id_location) THEN     
+            INSERT INTO Locations (id_user) VALUES (l_id_user);
+        END IF;
+
         SELECT MAX(id_location) INTO l_id_location FROM Locations;
 
         /* Calcul le prix total en fonction du prix unitaire (par jour), de la quantité et de la duree de location (par jour).*/
@@ -63,11 +70,6 @@ BEGIN
         /* Insertion de la Location dans la table Location_jeux */
         INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Penalite, Date_debut, Date_retour_prevu, Date_retournee)
         VALUES (l_id_location, l_id_jeu, l_quantite_desiree, l_duree,  l_prix_total, 0, CURDATE(), l_date_retour, NULL);
-
-        /* si id_location rien est inséré dans la table Locations */
-        IF EXISTS (SELECT l_id_location FROM locations WHERE id_location = l_id_location) THEN     
-            INSERT INTO Locations (id_location, id_user) VALUES (l_id_location, l_id_user);
-        END IF;
 
         /* Mise a jour des quantité dans la table jeux */
         UPDATE Jeux
@@ -87,6 +89,11 @@ VALUES ('Monopoly', 'Classique', 15.00, 10);
 
 INSERT INTO Jeux (Nom, Categorie, Prix, Quantite)
 VALUES ('Monopolyiiii', 'Classique', 15.00, 10);
+
+CALL louer(1, 1, 2);
+CALL louer(1, 2, 1)
+
+DROP PROCEDURE louer;
 
 
 
