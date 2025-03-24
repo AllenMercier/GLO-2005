@@ -1,4 +1,4 @@
--- Active: 1739460525589@@127.0.0.1@3306@projet
+-- Active: 1737572179011@@127.0.0.1@3306@projet
 CREATE TABLE IF NOT EXISTS Utilisateurs (   id_user INT PRIMARY KEY AUTO_INCREMENT,
                                             Nom VARCHAR(50), 
                                             Prenom VARCHAR(50), 
@@ -14,8 +14,9 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (   id_user INT PRIMARY KEY AUTO_INCREME
 CREATE TABLE IF NOT EXISTS Jeux (       id_jeu INT AUTO_INCREMENT PRIMARY KEY,
                                         Nom VARCHAR(50), 
                                         Categorie ENUM('Classique', 'Console', 'Ordinateur', 'Equipement'),
-                                        Prix Double,
-                                        Quantite INT);
+                                        Prix DOUBLE,
+                                        Quantite INT,
+                                        UNIQUE (Nom, Categorie));
 
 CREATE TABLE IF NOT EXISTS Factures (   id_facture INT PRIMARY KEY AUTO_INCREMENT,
                                         id_location INT,
