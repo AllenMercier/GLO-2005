@@ -1,3 +1,4 @@
+-- Active: 1739460525589@@127.0.0.1@3306@projet
 USE projet;
 DELIMITER //
 CREATE PROCEDURE louer (
@@ -65,8 +66,8 @@ BEGIN
         VALUES (l_id_location, l_id_jeu, l_quantite_desiree, l_duree,  l_prix_total, 0, CURDATE(), l_date_retour, NULL);
 
         /* si id_location rien est inséré dans la table Locations */
-        IF EXISTS (SELECT l_id_location FROM locations WHERE id_location = l_id_location) THEN     
-            INSERT INTO Locations (id_location, id_user) VALUES (l_id_location, l_id_user);
+        IF NOT EXISTS (SELECT l_id_location FROM locations WHERE id_location = l_id_location) THEN     
+            INSERT INTO Locations (id_user) VALUES (l_id_user);
         END IF;
 
         /* Mise a jour des quantité dans la table jeux */
@@ -87,6 +88,11 @@ VALUES ('Monopoly', 'Classique', 15.00, 10);
 
 INSERT INTO Jeux (Nom, Categorie, Prix, Quantite)
 VALUES ('Monopolyiiii', 'Classique', 15.00, 10);
+
+CALL louer(1, 1, 2);
+CALL louer(1, 2, 1)
+
+DROP PROCEDURE louer;
 
 
 
