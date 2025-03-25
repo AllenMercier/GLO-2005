@@ -54,8 +54,8 @@ BEGIN
         SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = 'Quantité en stock inssufisante';
     ELSE
         
-        /* si id_location rien est inséré dans la table Locations */
-        IF NOT EXISTS (SELECT l_id_location FROM locations WHERE id_location = l_id_location) THEN     
+        /* si id_location existe rien est inséré dans la table Locations */
+        IF l_id_location IS NULL THEN   
             INSERT INTO Locations (id_user) VALUES (l_id_user);
         END IF;
 
@@ -81,6 +81,46 @@ END;
 // 
 DELIMITER;
 
+DELIMITER//
+CREATE PROCEDURE retourner (
+    IN l_id_location INT,
+    IN l_id_jeu INT
+)
+BEGIN
+    DECLARE l_date_prevue Date;
+    DECLARE l_jour_retard INT;
+    DECLARE l_penalite DOUBLE DEFAULT 0;
+    DECLARE l_quantite INT;
+
+    /* Requête pour récupérer la date de retour prévue et la quantité d'article non retournée */
+    SELECT Date_retour_prevu, Quantite INTO l_date_prevue, l_quantite
+    FROM location_jeux
+    WHERE id_location = l_id_location
+        AND id_jeu = l_id_jeu
+        AND Date_retournee IS NULL;
+
+    /* Calculer le nombre de jour de retard */
+    SET l_jour_retard = ABS(DATEDIFF(CURDATE(), l_date_prevue));
+
+    /* si il y a un retard, calculer 5$ par jour de retard */
+    IF l_jour_retard > 0 THEN
+        SET l_penalite = l_jour_retard * 5;
+    END IF;
+
+    /* Mise a jour de la table location_jeux */
+    UPDATE location_jeux
+    SET DATE_retournee = CURDATE(),
+        Penalite = l_penalite
+    WHERE id_location = l_id_location
+        AND id_jeu = l_id_jeu;
+    
+    /* Remettre l'article retournée en stock */
+    UPDATE jeux
+    SET Quantite = Quantite + l_quantite
+    WHERE id_jeu = l_id_jeu;
+
+END;
+//
 
 INSERT INTO Utilisateurs (Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut)
 VALUES ('Dupont', 'Jean', 'jean.dupont@email.com', '1995-06-15', 'password123', 1);
@@ -91,9 +131,14 @@ INSERT INTO Jeux (Nom, Categorie, Prix, Quantite)
 VALUES ('Monopolyiiii', 'Classique', 15.00, 10);
 
 CALL louer(1, 1, 2);
-CALL louer(1, 2, 1)
+CALL louer(1, 2, 1);
+
+CALL retourner(3, 1);
 
 DROP PROCEDURE louer;
+
+DROP PROCEDURE retourner;
+
 
 
 
