@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css" >
+    <script type="text/javascript" src="../static/choisir.js"> </script>
+
+</head>
+<body>
+    <!--<form action= "#" method= "get" onsubmit="">-->
+
+    <h1>  listes de jeux classiques </h1>
+    <table id="listeClassique" class="center">
+
+        <tr>
+            <th>id_j</th>
+            <th>nom</th>
+            <th>prix</th>
+         </tr>
+            {% for row in liste %}
+            <tr>
+                 <td> {{row[0]}}</td>
+                 <td> {{row[1]}}</td>
+                 <td> {{row[2]}}</td>
+
+           </tr>
+            {% endfor %}
+
+    </table>
+
+
+    <div>
+
+
+        <label for="choix">Inscrire le numéro du choix:</label><br>
+         <input id="choix" type="text"/>
+      </div>
+
+    <div>
+		<!--<button class= "button button2" > <a href='listeChoixClassique'> Choisir jeux </a> </button>-->
+         <button class= "button button2" onclick="choisirJeu()">  Envoyer choix </button>
+        <!--<input type="button"  value="choisir Jeux" onclick="choisirClassJeu()" />-->
+	</div>
+
+    <div id="perso" >
+        <a href='/' class= "button button2" >  Retour page acceuil </a>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
