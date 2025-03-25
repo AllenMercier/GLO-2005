@@ -40,7 +40,7 @@ BEGIN
     CREATE TABLE IF NOT EXISTS Location_jeux (  id_location INT,
                                                 id_jeu INT,
                                                 Quantite INT,
-                                                Duree INT,
+                                                Duree INT DEFAULT 2,
                                                 Prix DOUBLE,
                                                 Penalite Double,
                                                 Date_debut DATE,
