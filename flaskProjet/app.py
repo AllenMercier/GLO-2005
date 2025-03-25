@@ -42,19 +42,27 @@ for _ in range(NB_ENTREES):
 
 # Jeux
 jeu_ids = []
-categories = ['Classique', 'Console', 'Ordinateur', 'Equipement']  # avec accent
-for _ in range(NB_ENTREES):
+categories = ['Classique', 'Console', 'Ordinateur', 'Equipement'] 
+used_pairs = set()
+while len(used_pairs) < NB_ENTREES:
+    nom_jeu = faker.word().capitalize()
+    categorie = random.choice(categories)
+    prix = round(random.uniform(5, 30), 2)
+    quantite = random.randint(1, 10)
+    
+    pair = (nom_jeu, categorie)
+    if pair in used_pairs:
+        continue
+    used_pairs.add(pair)
+    
     cursor.execute(
         "INSERT INTO Jeux (Nom, Categorie, Prix, Quantite) VALUES (%s, %s, %s, %s)",
-        (
-            faker.word().capitalize(),
-            random.choice(categories),
-            round(random.uniform(5, 30), 2),
-            random.randint(1, 10)
-        )
-    )
-    jeu_ids.append(cursor.lastrowid)
-
+        (nom_jeu, categorie, prix, quantite)
+    )    
+    id_jeu= cursor.lastrowid
+    jeu_ids.append(id_jeu)
+    
+    
 # Locations
 location_ids = []
 for _ in range(NB_ENTREES):
@@ -63,6 +71,7 @@ for _ in range(NB_ENTREES):
     location_ids.append(cursor.lastrowid)
 
 # Location_jeux avec paires (id_location, id_jeu) uniques
+
 used_pairs = set()
 while len(used_pairs) < NB_ENTREES:
     id_location = random.choice(location_ids)
