@@ -54,7 +54,7 @@ BEGIN
         SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = 'Quantité en stock inssufisante';
     ELSE
         
-        /* si id_location existe rien est inséré dans la table Locations */
+        /* Si id_location existe rien est inséré dans la table Locations */
         IF l_id_location IS NULL THEN   
             INSERT INTO Locations (id_user) VALUES (l_id_user);
         END IF;
@@ -102,7 +102,7 @@ BEGIN
     /* Calculer le nombre de jour de retard */
     SET l_jour_retard = ABS(DATEDIFF(CURDATE(), l_date_prevue));
 
-    /* si il y a un retard, calculer 5$ par jour de retard */
+    /* Si il y a un retard, calculer 5$ par jour de retard */
     IF l_jour_retard > 0 THEN
         SET l_penalite = l_jour_retard * 5;
     END IF;
@@ -121,6 +121,85 @@ BEGIN
 
 END;
 //
+
+
+DELIMITER //
+CREATE PROCEDURE create_facture(
+    IN l_id_location INT
+)
+BEGIN 
+    DECLARE l_montant_total Double;
+    DECLARE l_nb_facture INT;
+    DECLARE l_penalite DOUBLE;
+    DECLARE location_en_cours INT;
+    DECLARE l_max_date_retard INT;
+
+    /* Compte du montant total de facture pour la location */
+    SELECT COUNT(*) INTO l_nb_facture
+    FROM Factures 
+    WHERE id_location = l_id_location;
+
+    /* Affiche une erreur si il y a plus de 2 facture pour une location  */
+    IF l_nb_facture > 2 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Un clien ne peut avoir plus de 2 factures, une pour le paiement initial, et une autre en cas de pénalité';
+    END IF;
+
+    /* Cas 1: Facturation de la location seulement (indicateur: Date de retour = NULL)  */
+    SELECT COUNT(*) INTO location_en_cours
+    FROM location_jeux
+    WHERE id_location = l_id_location
+        AND Date_retournee IS NULL;
+    
+    IF location_en_cours > 0 THEN 
+        SELECT SUM(Prix) INTO l_montant_total
+        FROM location_jeux
+        WHERE id_location = l_id_location
+            AND Date_retournee IS NULL;
+    
+    ELSE 
+        /* Cas 2: Facturation de la pénalité (indicateur: la plus grande date de retard parmi tous les relation location de la table location_jeux)  */
+        SELECT MAX(DATEDIFF(Date_retournee, Date_retour_prevu)) INTO l_max_date_retard 
+        FROM location_jeux
+        Where id_location = l_id_location;
+
+        /* Calcul du montant total des pénalités */
+        IF l_max_date_retard > 0 THEN
+            SET l_penalite = l_max_date_retard * 5;
+        END IF;
+
+        set l_montant_total = l_penalite;
+    END IF;
+
+    /* Génération de la facture */
+    INSERT INTO Factures (id_location, Date_facture, montant_total)
+    VALUES (p_id_location, CURDATE(), v_montant_total);
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE create_paiement(
+    IN l_id_facture INT,
+    IN l_id_user INT,
+    IN l_no_carte varchar(50),
+    IN l_banque ENUM('RBC', 'Desjardins', 'National Bank', 'Tangerine', 'BMO')
+)
+BEGIN
+    /* Vérification de l'existance de la facture */
+    IF NOT EXISTS (SELECT facture FROM Factures WHERE id_facture = l_id_facture) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Facture inexistante';
+    END IF;
+
+    /* Enregistrement du paiement*/
+    INSERT INTO Paiements (id_facture, id_user, No_carte, Banque, Date_paiment)
+    VALUES (p_id_facture, p_id_user, p_no_carte, p_banque, CURDATE());
+END;
+//
+DELIMITER ;
+
+
 
 INSERT INTO Utilisateurs (Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut)
 VALUES ('Dupont', 'Jean', 'jean.dupont@email.com', '1995-06-15', 'password123', 1);
