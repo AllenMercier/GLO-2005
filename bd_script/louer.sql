@@ -104,24 +104,5 @@ DELIMITER;
         -fin
  */
 
- 
-INSERT INTO Utilisateurs (Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut)
-VALUES ('Dupont', 'Jean', 'jean.dupont@email.com', '1995-06-15', 'password123', 1);
-INSERT INTO Jeux (Nom, Categorie, Prix, Quantite)
-VALUES ('Monopoly', 'Classique', 15.00, 10);
-
-INSERT INTO Jeux (Nom, Categorie, Prix, Quantite)
-VALUES ('Monopolyiiii', 'Classique', 15.00, 10);
-
-CALL louer(1, 1, 2);
-CALL louer(1, 2, 1);
-
-CALL retourner(3, 1);
-
-DROP PROCEDURE louer;
-
-DROP PROCEDURE retourner;
-
-
 
 

@@ -1,7 +1,6 @@
 -- Active: 1739460525589@@127.0.0.1@3306@projet
-DELIMITER // 
-CREATE PROCEDURE create_table()
-BEGIN
+
+USE projet;
     CREATE TABLE IF NOT EXISTS Utilisateurs (   id_user INT PRIMARY KEY AUTO_INCREMENT,
                                                 Nom VARCHAR(50), 
                                                 Prenom VARCHAR(50), 
@@ -49,10 +48,4 @@ BEGIN
                                                 PRIMARY KEY (id_location, id_jeu),
                                                 FOREIGN KEY (id_location) REFERENCES Locations(id_location) ON DELETE CASCADE,
                                                 FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE);
-    END
-//
-DELIMITER ;
-
-CALL create_table();
-
 

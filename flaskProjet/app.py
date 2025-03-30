@@ -44,6 +44,7 @@ for _ in range(NB_ENTREES):
 jeu_ids = []
 categories = ['Classique', 'Console', 'Ordinateur', 'Equipement'] 
 used_pairs = set()
+used_noms = set()
 while len(used_pairs) < NB_ENTREES:
     nom_jeu = faker.word().capitalize()
     categorie = random.choice(categories)
@@ -53,6 +54,11 @@ while len(used_pairs) < NB_ENTREES:
     pair = (nom_jeu, categorie)
     if pair in used_pairs:
         continue
+    
+    cursor.execute("SELECT COUNT(*) FROM Jeux WHERE Nom = %s AND Categorie = %s", (nom_jeu, categorie))
+    if cursor.fetchone()[0] > 0:  # Si la combinaison existe déjà, passe à la prochaine itération
+        continue
+    
     used_pairs.add(pair)
     
     cursor.execute(

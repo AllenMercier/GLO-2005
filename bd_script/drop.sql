@@ -1,7 +1,4 @@
 -- Active: 1739460525589@@127.0.0.1@3306@projet
-DELIMITER //
-CREATE PROCEDURE drop_table()
-BEGIN
     DROP TABLE IF EXISTS Location_jeux;
     DROP TABLE IF EXISTS Paiments;
     DROP TABLE IF EXISTS Factures;
@@ -9,10 +6,5 @@ BEGIN
     DROP TABLE IF EXISTS Locations;
     DROP TABLE IF EXISTS Utilisateurs;
 
-    CREATE DATABASE IF NOT EXISTS projet;
-END
-//
-DELIMITER ;
-
-CALL drop_table();
-
+    DROP DATABASE IF EXISTS projet;
+    CREATE DATABASE projet;
