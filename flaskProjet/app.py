@@ -1,30 +1,30 @@
-from typing import Any
-from flask import Flask, render_template
-import pymysql
-import pymysql.cursors
-from faker import Faker
-import random
-from dotenv import load_dotenv
-from datetime import timedelta
-import os
+from typing import Any  # Import optionnel pour des annotations de type (non utilisé ici)
+from flask import Flask, render_template  # Importation de Flask et de la fonction de rendu de template HTML
+import pymysql  # Bibliothèque de connexion à MySQL
+import pymysql.cursors  # Module de gestion de curseurs MySQL
+from faker import Faker  # Bibliothèque pour générer des données fictives
+import random  # Module pour les tirages aléatoires
+from dotenv import load_dotenv  # Pour charger les variables d’environnement depuis un fichier .env
+from datetime import timedelta  # Pour effectuer des opérations sur les dates
+import os  # Pour interagir avec les variables d’environnement du système
 
-# Connexion à MySQL local
+# Chargement des variables d’environnement (.env)
 load_dotenv()
 
-# Connexion à MySQL local
+# Connexion à la base de données MySQL à partir des variables d’environnement
 conn = pymysql.connect(
     host=os.environ.get("HOST"),
     user=os.environ.get("USER"),
     password=os.environ.get("PASSWORD"),
     db=os.environ.get("DATABASE")
 )
-cursor = conn.cursor()
+cursor = conn.cursor()  # Création du curseur pour exécuter les requêtes SQL
 
 # ----------- Peuplement de la base -----------
-faker = Faker()
-NB_ENTREES = 300
+faker = Faker()  # Instanciation de Faker
+NB_ENTREES = 300  # Nombre de lignes à insérer dans chaque table
 
-# Utilisateurs
+# Insertion d'utilisateurs fictifs
 user_ids = []
 for _ in range(NB_ENTREES):
     cursor.execute(
@@ -38,11 +38,11 @@ for _ in range(NB_ENTREES):
             random.choice([0, 1])
         )
     )
-    user_ids.append(cursor.lastrowid)
+    user_ids.append(cursor.lastrowid)  # Récupération de l’ID inséré
 
-# Jeux
+# Insertion de jeux fictifs
 jeu_ids = []
-categories = ['Classique', 'Console', 'Ordinateur', 'Equipement'] 
+categories = ['Classique', 'Console', 'Ordinateur', 'Equipement']
 used_pairs = set()
 used_noms = set()
 while len(used_pairs) < NB_ENTREES:
@@ -55,8 +55,9 @@ while len(used_pairs) < NB_ENTREES:
     if pair in used_pairs:
         continue
     
+    # Vérifie si cette combinaison nom/catégorie existe déjà dans la BD
     cursor.execute("SELECT COUNT(*) FROM Jeux WHERE Nom = %s AND Categorie = %s", (nom_jeu, categorie))
-    if cursor.fetchone()[0] > 0:  # Si la combinaison existe déjà, passe à la prochaine itération
+    if cursor.fetchone()[0] > 0:
         continue
     
     used_pairs.add(pair)
@@ -65,19 +66,17 @@ while len(used_pairs) < NB_ENTREES:
         "INSERT INTO Jeux (Nom, Categorie, Prix, Quantite) VALUES (%s, %s, %s, %s)",
         (nom_jeu, categorie, prix, quantite)
     )    
-    id_jeu= cursor.lastrowid
+    id_jeu = cursor.lastrowid
     jeu_ids.append(id_jeu)
-    
-    
-# Locations
+
+# Insertion de locations liées à des utilisateurs
 location_ids = []
 for _ in range(NB_ENTREES):
     id_user = random.choice(user_ids)
     cursor.execute("INSERT INTO Locations (id_user) VALUES (%s)", (id_user,))
     location_ids.append(cursor.lastrowid)
 
-# Location_jeux avec paires (id_location, id_jeu) uniques
-
+# Insertion dans Location_jeux avec des paires (id_location, id_jeu) uniques
 used_pairs = set()
 while len(used_pairs) < NB_ENTREES:
     id_location = random.choice(location_ids)
@@ -102,7 +101,7 @@ while len(used_pairs) < NB_ENTREES:
         penalite, date_debut, date_retour_prevu, date_retournee
     ))
 
-# Factures
+# Insertion de factures liées aux locations
 facture_ids = []
 for id_location in location_ids[:NB_ENTREES]:
     date_facture = faker.date_this_year()
@@ -113,7 +112,7 @@ for id_location in location_ids[:NB_ENTREES]:
     )
     facture_ids.append(cursor.lastrowid)
 
-# Paiments
+# Insertion de paiements aléatoires liés à des factures et utilisateurs
 for _ in range(NB_ENTREES):
     id_facture = random.choice(facture_ids)
     id_user = random.choice(user_ids)
@@ -125,42 +124,42 @@ for _ in range(NB_ENTREES):
         VALUES (%s, %s, %s, %s, %s)
     """, (id_facture, id_user, no_carte, banque, date_paiement))
 
-conn.commit()
-print(" 300 entrées insérées dans chaque table avec succès.")
+conn.commit()  # Validation des transactions
+print(" 300 entrées insérées dans chaque table avec succès.")  # Message de confirmation
 
 # ----------- Récupération des jeux par catégorie -----------
+
+# Fonction pour récupérer les noms de jeux selon une catégorie donnée
 def get_jeux_par_catégorie(categorie):
     requete = "SELECT Nom FROM jeux WHERE Categorie= %s;"
     cursor.execute(requete, (categorie,))
     resultat = cursor.fetchall()
-    return [tuple[0] for tuple in resultat] 
-
-
+    return [tuple[0] for tuple in resultat]  # Retourne une liste des noms de jeux
 
 # ----------- Application Flask -----------
-app = Flask(__name__)
 
-@app.route('/')
+app = Flask(__name__)  # Création de l'application Flask
+
+@app.route('/')  # Page d’accueil
 def main():
     return render_template('acceuil.html')
 
-@app.route('/liste')
+@app.route('/liste')  # Route pour les jeux classiques
 def liste():
     return render_template('classiques.html', liste=get_jeux_par_catégorie('Classique'))
 
-@app.route('/console')
+@app.route('/console')  # Route pour les jeux de console
 def console():
     return render_template('consoles.html', liste=get_jeux_par_catégorie('Console'))
 
-@app.route('/ordinateur')
+@app.route('/ordinateur')  # Route pour les jeux d’ordinateur
 def ordinateur():
     return render_template('ordinateur.html', liste=get_jeux_par_catégorie('Ordinateur'))
 
-@app.route('/equipement')
+@app.route('/equipement')  # Route pour les équipements
 def equipement():
     return render_template('equipement.html', liste=get_jeux_par_catégorie('Equipement'))
 
-
-
+# Lancement de l’application Flask en mode debug sur le port 8080
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
