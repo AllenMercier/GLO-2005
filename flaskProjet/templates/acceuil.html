@@ -1,32 +1,109 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="../static/styles.css" >
- 
-  <title> Location de jeux   </title>
-  <script type="text/javascript" src="../static/choisir.js"> </script>
+  <meta charset="UTF-8">
+  <title>Location de Jeux Vidéo</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
-
 <body>
+  <!-- Bandeau promotionnel -->
+  <div class="promo-banner">
+    <p>Livraison gratuite pour toutes les commandes de 100$ et plus avant taxes!</p>
+  </div>
+  
+  <!-- En-tête -->
+  <header>
+    <div class="container header-content">
+      <!-- Logo -->
+      <div class="logo-placeholder">LOGO</div>
 
-    <h1> Location de jeux </h1>
-	<div class="btn-group" style="text-align:right">
-		<button class="button5"> Devenir Membre </button>
-		<button class="button5"> Connexion </button>
-		
-	</div>
+      <!-- Barre de recherche -->
+      <div class="search-bar">
+        <input type="text" placeholder="Recherchez un jeu...">
+        <button>Rechercher</button>
+      </div>
 
-	<div>
-		<button class="button"> <a href="liste">Jeux Classiques </a></button>
-        <button class="button button4"> <a href="console">Jeux sur Console </a></button>
-        <button class="button button3"> <a href="ordinateur">Jeux sur ordinateur </a></button>
-        <button class="button2 button"> <a href="/equipement">Accessoires et consoles </a></button>
-	</div>
-		<p name="ligne1"> pdftf     </p>
+      <!-- Navigation principale -->
+      <nav>
+        <ul>
+          <li><a href="#">Accueil</a></li>
+          <li><a href="#">Promos</a></li>
+          <li><a href="#">Acheter</a></li>
+          <li><a href="#">Vendre vos jeux</a></li>
+          <li><a href="#">Se connecter</a></li>
+        </ul>
+      </nav>
 
+      <!-- Sélecteurs langue et monnaie -->
+      <div class="lang-currency">
+        <select>
+          <option>Français</option>
+          <option>English</option>
+        </select>
+        <select>
+          <option>CAD</option>
+          <option>USD</option>
+        </select>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Section Promos -->
+  <section class="promos container">
+    <div class="promo-item">
+      <div class="promo-icon">Icon1</div>
+      <h3>3 pour 2</h3>
+      <p>sur tous les jeux à 9,99$ et moins avant taxes</p>
+    </div>
+    <div class="promo-item">
+      <div class="promo-icon">Icon2</div>
+      <h3>Livraison gratuite</h3>
+      <p>pour toutes les commandes de 100$ et plus avant taxes</p>
+    </div>
+    <div class="promo-item">
+      <div class="promo-icon">Icon3</div>
+      <h3>Vendre vos jeux</h3>
+      <p>Échangez vos anciens jeux en magasin.</p>
+    </div>
+  </section>
+  
+  <!-- Section de recherche -->
+  <main>
+    <div class="container">
+      <section id="searchSection">
+        <h2>Rechercher un jeu</h2>
+        <form id="searchForm" novalidate>
+          <div class="form-group">
+            <label for="gameName">Nom du jeu :</label>
+            <input type="text" id="gameName" name="gameName" placeholder="Entrez le nom du jeu" required>
+            <div class="error" id="nameError"></div>
+          </div>
+          <div class="form-group">
+            <label for="category">Catégorie :</label>
+            <select id="category" name="category" required>
+              <option value="">Sélectionner une catégorie</option>
+              <option value="Classique">Classique</option>
+              <option value="Console">Console</option>
+              <option value="Ordinateur">Ordinateur</option>
+              <option value="Equipement">Equipement</option>
+            </select>
+            <div class="error" id="categoryError"></div>
+          </div>
+          <button type="submit">Rechercher</button>
+        </form>
+        <div id="searchResults"></div>
+      </section>
+    </div>
+  </main>
+  
+  <!-- Pied de page -->
+  <footer>
+    <div class="container footer-content">
+      <p>&copy; 2025 Location de Jeux Vidéo. Tous droits réservés.</p>
+      <p>Magasin situé à Montréal avec livraison internationale</p>
+    </div>
+  </footer>
+  
+  <script src="/static/choisir.js"></script>
 </body>
-
 </html>

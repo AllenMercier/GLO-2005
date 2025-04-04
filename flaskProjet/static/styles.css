@@ -1,83 +1,250 @@
-﻿
-H1{ 
-	
-	text-align:center;
-	
+﻿/* Réinitialisation */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-H3 {
-	color:red;
-  }
+/* Style global */
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #74ABE2, #5563DE);
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-.button {
-  background-color: #04AA6D; /* Green */
-  border: none;
-  color: white;
-  padding: 22px 32px;
+/* Conteneur principal */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto; /* Centre horizontalement */
+}
+
+/* Bandeau promotionnel */
+.promo-banner {
+  background-color: #4b0082;
+  color: #fff;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 16px 16px;
-  cursor: pointer;
-  border-radius: 10px;
+  padding: 8px 0;
+  font-size: 0.95rem;
 }
 
-.button2 {
-  background-color: #555555; /* GRAY */
-  
+/* En-tête */
+header {
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.header-content {
+  display: flex;
+  flex-wrap: wrap;          /* Autorise le passage à la ligne si nécessaire */
+  align-items: center;      /* Centre verticalement */
+  justify-content: center;  /* Centre horizontalement l'ensemble */
+  padding: 10px 0;
+  gap: 1rem;                /* Espacement entre les blocs */
 }
 
-.button3 {
-  background-color: blue; /* BLUE */
-  
+/* Logo */
+.logo-placeholder {
+  background-color: #ccc;
+  color: #333;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 40px;
+  border-radius: 4px;
 }
 
-.button4 {
-  background-color: #008CBA; /* BLUE */
-  
+/* Barre de recherche */
+.search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden; /* Pour arrondir proprement les bords */
 }
-
-.btn-group .button5 {
-  background-color:Gray; /* GrAY */
+.search-bar input {
+  padding: 8px;
   border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display:inline-block;
-  font-size: 16px;
-  
+  outline: none;
+  flex: 1;
+}
+.search-bar button {
+  padding: 8px 12px;
+  border: none;
+  background-color: #4b0082;
+  color: #fff;
   cursor: pointer;
+}
+
+/* Navigation */
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+nav ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+nav ul li a:hover {
+  color: #4b0082;
+}
+
+/* Sélecteurs langue et monnaie */
+.lang-currency {
+  display: flex;
+  gap: 0.5rem;
+}
+.lang-currency select {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Section Promos */
+.promos {
+  width: 80%;              /* Largeur à 80% de la fenêtre, ajustable selon tes goûts */
+  margin: 20px auto;       /* Centre la section horizontalement */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;     /* Centre verticalement les .promo-item */
+  justify-content: center; /* Centre horizontalement les .promo-item */
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  gap: 2rem;               /* Espace entre les .promo-item */
+}
+
+
+.promo-item {
+  text-align: center;
+  max-width: 220px;
+}
+.promo-icon {
+  background-color: #ddd;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 10px auto;
+  font-weight: bold;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.promo-item h3 {
+  font-size: 1.1rem;
+  color: #4b0082;
+  margin-bottom: 5px;
+}
+.promo-item p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Section de recherche */
+main {
+  flex: 1; /* Pour que le footer soit poussé en bas si peu de contenu */
+  padding: 20px 0;
+}
+#searchSection {
+  background: #fff;
   border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto; /* Centre le bloc de recherche */
 }
-DIV {
-	text-align:center;
-}
-
-
-#affichage {
-			width: 90%;
-			display: inline-block;
-			font-size: 1.1em;
-		}
-		
-.cat {
-			width: 40%;
-			display: inline-block;
-			margin-top: 100px;
-			//margin-left:125px;
-			padding: 0px;
-		}
-
-.conteneur {
-
-	width:1400px;
-	
-	
-	margin-right:auto;
-	margin-left:auto;
-	
-	
+#searchSection h2 {
+  margin-bottom: 20px;
+  color: #5563DE;
 }
 
+/* Formulaire */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+.form-group input[type="text"],
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Bouton Rechercher */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #5563DE;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+button[type="submit"]:hover {
+  background-color: #4353B3;
+}
+
+/* Messages d'erreur */
+.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 5px;
+}
+
+/* Section Résultats */
+#searchResults {
+  margin-top: 20px;
+  text-align: left;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+#searchResults h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+#searchResults ul {
+  list-style: none;
+  padding: 0;
+}
+#searchResults ul li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+#searchResults ul li:last-child {
+  border-bottom: none;
+}
+
+/* Pied de page */
+footer {
+  background: #fff;
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid #ccc;
+}
+.footer-content p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
