@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Achat de {{ jeu.Nom }}{% endblock %}
+
+{% block content %}
+<main>
+  <div class="detail-container">
+    <h1>Achat de {{ jeu.Nom }}</h1>
+    <p><strong>Catégorie :</strong> {{ jeu.Categorie }}</p>
+    <p><strong>Prix :</strong> {{ jeu.Prix }} $</p>
+    <p><strong>Quantité disponible :</strong> {{ jeu.Quantite }}</p>
+    <form method="POST">
+      <label for="quantite">Quantité à acheter :</label><br>
+      <input type="number" id="quantite" name="quantite" min="1" max="{{ jeu.Quantite }}" required>
+      <br>
+      <button type="submit" class="button">Acheter</button>
+    </form>
+  </div>
+</main>
+{% endblock %}

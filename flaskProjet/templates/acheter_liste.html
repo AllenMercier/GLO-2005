@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Acheter des Jeux Vidéo{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="page-title">Acheter des Jeux Vidéo</h1>
+  
+  {% for categorie, jeux in jeux_par_categorie.items() %}
+  <section class="categorie-section">
+    <h2 class="categorie-title">{{ categorie }}</h2>
+    {% if jeux %}
+    <table class="jeu-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prix ($)</th>
+          <th>Quantité</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for jeu in jeux %}
+        <tr>
+          <td>{{ jeu.Nom }}</td>
+          <td>{{ jeu.Prix }}</td>
+          <td>{{ jeu.Quantite }}</td>
+          <td><a class="button" href="{{ url_for('acheter', id=jeu.id) }}">Acheter</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="aucun-jeu">Aucun jeu disponible dans cette catégorie.</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</main>
+{% endblock %}
