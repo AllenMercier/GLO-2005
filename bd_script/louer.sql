@@ -66,9 +66,8 @@ BEGIN
         /* Si id_location existe rien est inséré dans la table Locations */
         IF l_id_location IS NULL THEN   
             INSERT INTO Locations (id_user) VALUES (l_id_user);
+            SET l_id_location = LAST_INSERT_ID(); /* Récupère l'id de la location insérée */
         END IF;
-
-        SELECT MAX(id_location) INTO l_id_location FROM Locations;
 
         /* Calcul le prix total en fonction du prix unitaire (par jour), de la quantité et de la durée de location (par jour).*/
         SET l_prix_total = l_prix_unitaire * l_quantite_desiree * l_duree;
@@ -78,7 +77,7 @@ BEGIN
 
         /* Insertion de la location dans la table Location_jeux */
         INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Penalite, Date_debut, Date_retour_prevu, Date_retournee)
-        VALUES (l_id_location, l_id_jeu, l_quantite_desiree, l_duree,  l_prix_total, 0, CURDATE(), l_date_retour, NULL);
+        VALUES (l_id_location, l_id_jeu, l_quantite_desiree, l_duree,  l_prix_total, NULL, CURDATE(), l_date_retour, NULL);
 
         /* Mise à jour des quantités dans la table Jeux */
         UPDATE Jeux
@@ -105,4 +104,69 @@ DELIMITER;
  */
 
 
+DELIMITER //
+CREATE TRIGGER set_location_price
+BEFORE INSERT ON Location_jeux
+FOR EACH ROW
+BEGIN
+    DECLARE jeu_prix DOUBLE;
+    
+    -- Récupère le prix actuel du jeu
+    SELECT Prix INTO jeu_prix FROM Jeux WHERE id_jeu = NEW.id_jeu;
+    
+    -- Calcule et stocke le prix total
+    SET NEW.Prix = jeu_prix * NEW.Quantite * NEW.Duree;
+END//
+DELIMITER ;
 
+DELIMITER //
+
+CREATE TRIGGER calculate_penalty
+AFTER INSERT ON Location_jeux
+FOR EACH ROW
+BEGIN
+    DECLARE days_late INT;
+    DECLARE penalty DOUBLE;
+
+    -- Calculer le nombre de jours de retard
+    IF NEW.Date_retournee > NEW.Date_retour_prevu THEN
+        SET days_late = DATEDIFF(NEW.Date_retournee, NEW.Date_retour_prevu);
+        SET penalty = days_late * 5; -- Par exemple, 5 unités monétaires par jour de retard
+    ELSE
+        SET penalty = 0;
+    END IF;
+
+    -- Insérer ou mettre à jour la pénalité dans la table Penalites
+    INSERT INTO Penalites (id_location, id_jeu, Penalite)
+    VALUES (NEW.id_location, NEW.id_jeu, penalty)
+    ON DUPLICATE KEY UPDATE Penalite = penalty;
+END;
+//
+
+DELIMITER ;
+
+
+
+
+DELIMITER //
+
+CREATE TRIGGER check_user_status
+BEFORE INSERT ON locations
+FOR EACH ROW
+BEGIN
+    DECLARE user_status BOOLEAN;
+
+    -- Vérifier le statut de l'utilisateur
+    SELECT Statut INTO user_status
+    FROM Utilisateurs
+    WHERE id_user = NEW.id_user;
+
+    -- Si le statut n'est pas 1, lever une erreur
+    IF user_status IS NULL OR user_status != 1 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'L\'utilisateur n\'est pas actif et ne peut pas procéder à des locations.';
+    END IF;
+END;
+//
+
+DELIMITER ;

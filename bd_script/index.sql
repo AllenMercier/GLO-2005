@@ -15,4 +15,4 @@ CREATE INDEX idx_location ON Factures(id_location);
 CREATE INDEX idx_location ON Location_jeux(id_location);
 
 /* Index pour retrouver un paimement de factures*/
-CREATE INDEX idx_facture ON Paiements(id_facture);
+CREATE INDEX idx_facture ON Paiments(id_facture);

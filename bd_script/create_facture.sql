@@ -9,7 +9,7 @@ BEGIN
     DECLARE l_penalite DOUBLE;            -- Variable pour stocker le montant de la pénalité
     DECLARE location_en_cours INT;        -- Variable pour vérifier s'il y a encore des jeux non retournés
     DECLARE l_max_date_retard INT;        -- Variable pour stocker le maximum de jours de retard
-
+    DECLARE l_nb_facture INT;             -- Variable pour stocker le nombre de facture
     /* Compter le nombre total de factures pour la location */
     SELECT COUNT(*) INTO l_nb_facture
     FROM Factures 
@@ -70,3 +70,7 @@ DELIMITER ;  -- Retour au délimiteur SQL standard
 
     Erreur potentielle : le nombre d'articles retournés n'est pas égal au nombre d'articles loués
 */
+
+
+INSERT INTO location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Date_debut, Date_retour_prevu, Date_retournee)
+VALUES (1, 1, 2, 5, 20.00, '2025-04-01', '2025-04-10', '2025-04-15');

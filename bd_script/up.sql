@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
     Prenom VARCHAR(50),                          -- Prénom de l'utilisateur
     Email VARCHAR(100) UNIQUE,                   -- Email unique (clé candidate)
     Date_de_naissance DATE,                      -- Date de naissance
-    Mot_de_passe VARCHAR(50),                    -- Mot de passe (non chiffré ici, attention)
+    Mot_de_passe VARCHAR(255),                   -- Mot de passe (non chiffré ici, attention)
     Statut BOOLEAN                               -- Statut de l'utilisateur (actif/inactif)
 );
 
@@ -60,12 +60,19 @@ CREATE TABLE IF NOT EXISTS Location_jeux (
     id_jeu INT,                                  -- Référence vers le jeu loué
     Quantite INT,                                -- Quantité de jeux loués
     Duree INT DEFAULT 2,                         -- Durée de location en jours (par défaut : 2)
-    Prix DOUBLE,                                 -- Prix de la location
-    Penalite Double,                             -- Montant de la pénalité pour retard
+    Prix DOUBLE,                                 -- Prix de la location par jour 
     Date_debut DATE,                             -- Date de début de la location
     Date_retour_prevu DATE,                      -- Date de retour prévue
     Date_retournee DATE,                         -- Date de retour réelle
     PRIMARY KEY (id_location, id_jeu),           -- Clé primaire composée : une ligne par jeu loué dans une location
     FOREIGN KEY (id_location) REFERENCES Locations(id_location) ON DELETE CASCADE,  -- Clé étrangère vers Locations
     FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE                  -- Clé étrangère vers Jeux
+);
+
+CREATE TABLE Penalites (
+    id_location INT,
+    id_jeu INT,
+    Penalite DOUBLE,
+    PRIMARY KEY (id_location, id_jeu),
+    FOREIGN KEY (id_location, id_jeu) REFERENCES Location_jeux(id_location, id_jeu)
 );

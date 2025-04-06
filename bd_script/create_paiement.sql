@@ -35,3 +35,37 @@ DELIMITER ;  -- Retour au délimiteur standard
     - Enregistrer le paiement - ok
     - fin
 */
+
+INSERT INTO Utilisateurs (id_user, Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut)
+VALUES 
+(1, 'Dupont', 'Jean', 'jean.dupont@example.com', '1990-01-01', 'password123', TRUE),
+(2, 'Martin', 'Sophie', 'sophie.martin@example.com', '1985-05-15', 'password456', TRUE);
+
+INSERT INTO locations (id_location, id_user)
+VALUES 
+(1, 1),
+(2, 2);
+
+INSERT INTO jeux (id_jeu, Nom, Categorie, Prix, Quantite)
+VALUES 
+(1, 'Monopoly', 'Classique', 20.00, 10),
+(2, 'Mario Kart', 'Console', 50.00, 5);
+
+INSERT INTO location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Date_debut, Date_retour_prevu, Date_retournee)
+VALUES 
+(1, 1, 2, 5, 40.00, '2025-04-01', '2025-04-10', '2025-04-15');
+
+INSERT INTO location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Date_debut, Date_retour_prevu, Date_retournee)
+VALUES 
+(2, 2, 1, 3, 50.00, '2025-04-01', '2025-04-05', '2025-04-05');
+
+INSERT INTO Factures (id_facture, id_location, Date_facture, montant_total)
+VALUES 
+(1, 1, '2025-04-15', 100.00),
+(2, 2, '2025-04-05', 50.00);
+
+CALL create_paiement(3, 1, '1234-5678-9012-3456', 'RBC');
+-- Devrait lever une erreur : "Facture inexistante"
+
+CALL create_paiement(1, 1, '1234-5678-9012-3456', 'RBC');
+-- Devrait lever une erreur : "Facture déjà payée"

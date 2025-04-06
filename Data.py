@@ -144,17 +144,43 @@ while len(used_pairs) < NB_ENTREES:
     quantite = random.randint(1, 3)
     duree = random.randint(1, 10)
     prix = round(random.uniform(5, 50), 2)
-    penalite = round(random.uniform(0, 10), 2)
     date_debut = faker.date_this_year()
     date_retour_prevu = date_debut + timedelta(days=duree)
     date_retournee = date_retour_prevu + timedelta(days=random.choice([0, 1, -1]))
     cursor.execute("""
-        INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Penalite, Date_debut, Date_retour_prevu, Date_retournee)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Date_debut, Date_retour_prevu, Date_retournee)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         id_location, id_jeu, quantite, duree, prix,
-        penalite, date_debut, date_retour_prevu, date_retournee
+        date_debut, date_retour_prevu, date_retournee
     ))
+    
+  # Récupérer toutes les entrées de la table Location_jeux
+    cursor.execute("SELECT id_location, id_jeu FROM Location_jeux;")
+    location_jeux = cursor.fetchall()
+
+    penalites = []
+    for entry in location_jeux:
+        id_location = entry[0]
+        id_jeu = entry[1]
+        
+        # Vérifier si la paire existe déjà dans Penalites
+        cursor.execute("SELECT COUNT(*) FROM Penalites WHERE id_location = %s AND id_jeu = %s", (id_location, id_jeu))
+        if cursor.fetchone()[0] > 0:
+            continue  # Passer à la prochaine paire si elle existe déjà
+
+        # Générer une pénalité aléatoire (par exemple, entre 0 et 50)
+        penalite = round(random.uniform(0, 50), 2)
+
+        # Ajouter les données à la liste
+        penalites.append((id_location, id_jeu, penalite))
+
+    # Insérer les pénalités dans la table Penalites
+    if penalites:
+        cursor.executemany(
+            "INSERT INTO Penalites (id_location, id_jeu, Penalite) VALUES (%s, %s, %s);",
+            penalites
+        )
 
 # Insertion de factures liées aux locations
 facture_ids = []
