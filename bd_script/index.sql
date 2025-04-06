@@ -9,10 +9,8 @@ CREATE INDEX idx_location_retour ON Location_jeux(id_location, Date_retournee);
 CREATE INDEX idx_location_jeu_retour ON Location_jeux(id_location, id_jeu, Date_retournee);
 
 /* Index pour retrouver la facture d'une location */
-CREATE INDEX idx_location ON Factures(id_location); 
-
-/* Index pour retrouver les informations sur la location d'un jeu*/
-CREATE INDEX idx_location ON Location_jeux(id_location);
+CREATE INDEX idx_facture_location ON Factures(id_location); 
 
 /* Index pour retrouver un paimement de factures*/
-CREATE INDEX idx_facture ON Paiments(id_facture);
+CREATE INDEX idx_facture_paiement ON Paiments(id_facture);
+

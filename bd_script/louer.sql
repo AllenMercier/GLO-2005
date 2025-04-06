@@ -72,7 +72,7 @@ BEGIN
         /* Calcul le prix total en fonction du prix unitaire (par jour), de la quantité et de la durée de location (par jour).*/
         SET l_prix_total = l_prix_unitaire * l_quantite_desiree * l_duree;
 
-        /* Calcule la date de retour à l'aide de la fonction DATE_ADD, qui permet d’additionner une date et un entier */
+        /* Calcule la date de retour à l'aide de la fonction DATE_ADD, qui permet d’additionner une date et un entier. la durée est de 2 jours par défaut */
         SET l_date_retour = DATE_ADD(CURDATE(), INTERVAL l_duree DAY); 
 
         /* Insertion de la location dans la table Location_jeux */
