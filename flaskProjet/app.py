@@ -4,6 +4,10 @@ import pymysql.cursors
 import os
 from dotenv import load_dotenv
 import hashlib
+from passlib.hash import sha256_crypt
+import csv
+
+
 
 # Chargement des variables d'environnement
 load_dotenv()
@@ -66,23 +70,64 @@ def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
         try:
-            query = "SELECT id, Nom, Prenom, Mot_de_passe FROM Utilisateurs WHERE Email = %s"
+            query = "SELECT Email, Nom, Prenom, Mot_de_passe FROM Utilisateurs WHERE Email = %s"
             cursor.execute(query, (email,))
             user = cursor.fetchone()
             if user is None:
                 error = "Utilisateur non trouvé."
-            elif user["Mot_de_passe"] != hashed_password:
+            elif not sha256_crypt.verify(password, user["Mot_de_passe"]):
                 error = "Mot de passe incorrect."
             else:
-                session["user_id"] = user["id"]
+                session["user_email"] = user["Email"]
                 session["user_name"] = f"{user['Prenom']} {user['Nom']}"
                 flash("Connexion réussie !", "success")
                 return redirect(url_for("main"))
         except Exception as e:
             error = f"Une erreur s'est produite : {str(e)}"
     return render_template("login.html", error=error)
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        try:
+            # Récupérer les données du formulaire
+            nom = request.form.get("nom")
+            prenom = request.form.get("prenom")
+            email = request.form.get("email")
+            date_naissance = request.form.get("date_naissance")
+            mot_de_passe = request.form.get("mot_de_passe")
+            statut = request.form.get("statut")  # 1 pour actif, 0 pour inactif
+
+            # Vérifier que tous les champs sont remplis
+            if not all([nom, prenom, email, date_naissance, mot_de_passe, statut]):
+                flash("Tous les champs sont obligatoires.", "error")
+                return redirect(url_for("register"))
+
+            # Vérifier si l'email existe déjà
+            cursor.execute("SELECT Email FROM Utilisateurs WHERE Email = %s", (email,))
+            if cursor.fetchone():
+                flash("Cet email est déjà utilisé. Veuillez en choisir un autre.", "error")
+                return redirect(url_for("register"))
+
+            # Hachage du mot de passe avec passlib
+            hashed_password = sha256_crypt.hash(mot_de_passe)
+
+            # Insérer les données dans la base de données
+            cursor.execute("""
+                INSERT INTO Utilisateurs (Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (nom, prenom, email, date_naissance, hashed_password, statut))
+            conn.commit()
+
+            flash("Inscription réussie ! Vous pouvez maintenant vous connecter.", "success")
+            return redirect(url_for("login"))
+        except Exception as e:
+            # Gestion des erreurs
+            flash(f"Une erreur s'est produite lors de l'inscription : {str(e)}", "error")
+            return redirect(url_for("register"))
+    
+    return render_template("Inscription.html")
 
 @app.route('/logout')
 def logout():
