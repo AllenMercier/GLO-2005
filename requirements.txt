@@ -1,0 +1,6 @@
+Flask==2.3.2
+pymysql==1.0.3
+python-dotenv==1.0.0
+passlib==1.7.4
+Faker==18.9.0
+sqlparse==0.4.4

@@ -3,7 +3,6 @@ import pymysql
 import pymysql.cursors
 import os
 from dotenv import load_dotenv
-import hashlib
 from passlib.hash import sha256_crypt
 import csv
 
