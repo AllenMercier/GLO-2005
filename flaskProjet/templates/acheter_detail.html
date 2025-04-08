@@ -1,20 +1,21 @@
 {% extends "base.html" %}
-
 {% block title %}Achat de {{ jeu.Nom }}{% endblock %}
-
 {% block content %}
 <main>
   <div class="detail-container">
-    <h1>Achat de {{ jeu.Nom }}</h1>
+    <h1>{{ jeu.Nom }}</h1>
     <p><strong>Catégorie :</strong> {{ jeu.Categorie }}</p>
-    <p><strong>Prix :</strong> {{ jeu.Prix }} $</p>
-    <p><strong>Quantité disponible :</strong> {{ jeu.Quantite }}</p>
+    <p><strong>Prix :</strong> {{ jeu.Prix }} $</p>
+    <p><strong>Stock :</strong> {{ jeu.Quantite }}</p>
     <form method="POST">
-      <label for="quantite">Quantité à acheter :</label><br>
+      <label for="quantite">Quantité :</label><br>
       <input type="number" id="quantite" name="quantite" min="1" max="{{ jeu.Quantite }}" required>
-      <br>
+      <br><br>
       <button type="submit" class="button">Acheter</button>
     </form>
+    <p style="margin-top:15px;">
+      <a class="button small" href="{{ url_for('acheter', cat=current_cat) }}">← Retour</a>
+    </p>
   </div>
 </main>
 {% endblock %}

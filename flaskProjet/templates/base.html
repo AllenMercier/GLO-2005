@@ -3,58 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Location de Jeux Vidéo{% endblock %}</title>
-    <link rel="stylesheet" text="text/css" href="/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="promo-banner">
-    <p>Livraison gratuite pour toutes les commandes de 100$ et plus avant taxes!</p>
+        <p>Livraison gratuite pour toutes les commandes de 100$ et plus avant taxes !</p>
     </div>
     
     <header>
-    <div class="header-content">
-        <div class="logo">LOGO</div>
-        <div class="search-bar">
-        <input type="text" placeholder="Rechercher un jeu...">
-        <button>Rechercher</button>
+        <div class="header-content">
+            <div class="logo">LOGO</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Rechercher un jeu…">
+                <button>Rechercher</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('main') }}">Accueil</a></li>
+                    <li><a href="{{ url_for('acheter') }}">Acheter</a></li>
+                    {% if session.get('user_id') %}
+                        <li><a href="{{ url_for('panier') }}">Panier</a></li>
+                        <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Se connecter</a></li>
+                        <li><a href="{{ url_for('register') }}">Inscription</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="lang-currency">
+                <select>
+                    <option>Français</option>
+                    <option>English</option>
+                </select>
+                <select>
+                    <option>CAD</option>
+                    <option>USD</option>
+                </select>
+            </div>
         </div>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('main') }}">Accueil</a></li>
-                <li><a href="{{ url_for('acheter') }}">Acheter</a></li>
-                {% if session.user_email %}
-                    <li><a href="{{ url_for('panier') }}">Panier</a></li>
-                    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
-                {% else %}
-                    <li><a href="{{ url_for('login') }}">Se connecter</a></li>
-                    <li><a href="{{ url_for('register') }}">Inscription</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-        <div class="lang-currency">
-        <select>
-            <option>Français</option>
-            <option>English</option>
-        </select>
-        <select>
-            <option>CAD</option>
-            <option>USD</option>
-        </select>
-        </div>
-    </div>
     </header>
     
-    <!-- Contenu spécifique -->
     <div class="page-content">
-    {% block content %}
-    {% endblock %}
+        {% block content %}{% endblock %}
     </div>
     
-    <!-- Pied de page commun -->
     <footer>
-    <div class="footer-content">
-        <p>&copy; 2025 - Location de Jeux Vidéo. Tous droits réservés.</p>
-    </div>
+        <div class="footer-content">
+            <p>&copy; 2025 – Location de Jeux Vidéo. Tous droits réservés.</p>
+        </div>
     </footer>
 </body>
 </html>
-    

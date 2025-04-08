@@ -180,3 +180,60 @@ footer {
   font-size: 0.9rem;
   margin: 5px 0;
 }
+
+/* Reset basique */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
+
+/* Promo banner */
+.promo-banner { background: #007BFF; color: #fff; text-align: center; padding: 8px 0; }
+
+/* Header */
+.header-content {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap:1rem; padding:10px 5%; background:#fff;
+  border-bottom:1px solid #ddd;
+}
+.logo { font-weight:bold; font-size:1.2em; }
+.search-bar { display:flex; border:1px solid #ccc; border-radius:4px; overflow:hidden; }
+.search-bar input { border:none; padding:6px; outline:none; }
+.search-bar button { background:#007BFF; color:#fff; border:none; padding:6px 10px; cursor:pointer; }
+nav ul { list-style:none; display:flex; gap:1rem; }
+nav a { text-decoration:none; color:#333; padding:6px; }
+nav a:hover { color:#007BFF; }
+.lang-currency { display:flex; gap:0.5rem; }
+.lang-currency select { padding:6px; border:1px solid #ccc; border-radius:4px; }
+
+/* Page content */
+.page-content { padding:20px 5%; }
+
+/* Acheter cards */
+.page-title { text-align:center; color:#007BFF; margin:20px 0; font-size:2em; }
+.cards-grid {
+  display:flex; flex-wrap:wrap; gap:20px;
+  justify-content:center;
+}
+.card {
+  background:#fff; width:200px; border-radius:8px;
+  box-shadow:0 4px 8px rgba(0,0,0,0.1); display:flex; flex-direction:column;
+  transition:transform 0.2s;
+}
+.card:hover { transform:translateY(-5px); }
+.card-image { background:#eee; height:120px; display:flex; align-items:center; justify-content:center; }
+.placeholder-img { color:#aaa; }
+.card-content { padding:10px; flex:1; display:flex; flex-direction:column; }
+.card-content h3 { margin-bottom:8px; font-size:1.1em; }
+.price { color:#007BFF; font-weight:bold; margin-bottom:5px; }
+.stock { font-size:0.9em; color:#555; margin-bottom:15px; }
+.card-actions { display:flex; gap:5px; margin-top:auto; }
+.button {
+  flex:1; padding:6px; text-align:center; background:#007BFF;
+  color:#fff; border:none; border-radius:4px; cursor:pointer;
+  text-decoration:none;
+}
+.button:hover { background:#0056b3; }
+.secondary { background:#6c757d; }
+.secondary:hover { background:#5a6268; }
+
+/* Footer */
+footer { text-align:center; padding:10px; background:#eee; margin-top:auto; }
