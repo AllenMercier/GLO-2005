@@ -66,13 +66,6 @@ CREATE TABLE IF NOT EXISTS Location_jeux (
     Date_retournee DATE,                         -- Date de retour réelle
     PRIMARY KEY (id_location, id_jeu),           -- Clé primaire composée : une ligne par jeu loué dans une location
     FOREIGN KEY (id_location) REFERENCES Locations(id_location) ON DELETE CASCADE,  -- Clé étrangère vers Locations
-    FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE                  -- Clé étrangère vers Jeux
-);
+    FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE        
 
-CREATE TABLE Penalites (
-    id_location INT,
-    id_jeu INT,
-    Penalite DOUBLE,
-    PRIMARY KEY (id_location, id_jeu),
-    FOREIGN KEY (id_location, id_jeu) REFERENCES Location_jeux(id_location, id_jeu)
 );

@@ -154,33 +154,6 @@ while len(used_pairs) < NB_ENTREES:
         id_location, id_jeu, quantite, duree, prix,
         date_debut, date_retour_prevu, date_retournee
     ))
-    
-  # Récupérer toutes les entrées de la table Location_jeux
-    cursor.execute("SELECT id_location, id_jeu FROM Location_jeux;")
-    location_jeux = cursor.fetchall()
-
-    penalites = []
-    for entry in location_jeux:
-        id_location = entry[0]
-        id_jeu = entry[1]
-        
-        # Vérifier si la paire existe déjà dans Penalites
-        cursor.execute("SELECT COUNT(*) FROM Penalites WHERE id_location = %s AND id_jeu = %s", (id_location, id_jeu))
-        if cursor.fetchone()[0] > 0:
-            continue  # Passer à la prochaine paire si elle existe déjà
-
-        # Générer une pénalité aléatoire (par exemple, entre 0 et 50)
-        penalite = round(random.uniform(0, 50), 2)
-
-        # Ajouter les données à la liste
-        penalites.append((id_location, id_jeu, penalite))
-
-    # Insérer les pénalités dans la table Penalites
-    if penalites:
-        cursor.executemany(
-            "INSERT INTO Penalites (id_location, id_jeu, Penalite) VALUES (%s, %s, %s);",
-            penalites
-        )
 
 # Insertion de factures liées aux locations
 facture_ids = []

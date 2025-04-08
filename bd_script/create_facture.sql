@@ -50,7 +50,7 @@ BEGIN
 
     /* Génération de la facture */
     INSERT INTO Factures (id_location, Date_facture, montant_total)
-    VALUES (p_id_location, CURDATE(), v_montant_total);  -- Insertion dans la table Factures
+    VALUES (l_id_location, CURDATE(), l_montant_total);  -- Insertion dans la table Factures
 END;
 //  -- Fin de la procédure
 DELIMITER ;  -- Retour au délimiteur SQL standard
@@ -72,5 +72,3 @@ DELIMITER ;  -- Retour au délimiteur SQL standard
 */
 
 
-INSERT INTO location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Date_debut, Date_retour_prevu, Date_retournee)
-VALUES (1, 1, 2, 5, 20.00, '2025-04-01', '2025-04-10', '2025-04-15');

@@ -76,18 +76,21 @@ BEGIN
         SET l_date_retour = DATE_ADD(CURDATE(), INTERVAL l_duree DAY); 
 
         /* Insertion de la location dans la table Location_jeux */
-        INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, Penalite, Date_debut, Date_retour_prevu, Date_retournee)
-        VALUES (l_id_location, l_id_jeu, l_quantite_desiree, l_duree,  l_prix_total, NULL, CURDATE(), l_date_retour, NULL);
+        INSERT INTO Location_jeux (id_location, id_jeu, Quantite, Duree, Prix, date_debut, Date_retour_prevu, Date_retournee)
+        VALUES (l_id_location, l_id_jeu, l_quantite_desiree, l_duree,  l_prix_total, CURDATE(), l_date_retour, NULL);
 
         /* Mise à jour des quantités dans la table Jeux */
         UPDATE Jeux
         SET Quantite = Quantite - l_quantite_desiree
         Where id_jeu = l_id_jeu;
+
+        CALL create_facture(l_id_location); /* Appel de la procédure pour créer une facture */
     END IF;
 END;
 // 
 DELIMITER;
 
+DROP PROCEDURE louer;
 /* 
     -vérifie si le client est abonnée -ok
     -vérfie si une location au même jour existe déja -ok
