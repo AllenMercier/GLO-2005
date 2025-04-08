@@ -1,13 +1,12 @@
 -- Active: 1739460525589@@127.0.0.1@3306@projet
 -- Indique l’environnement actif : identifiant de connexion à la base de données "projet" sur localhost
-
 USE projet;  
 -- Utilise la base de données "projet"
 
 -- Création de la table Utilisateurs si elle n'existe pas
 CREATE TABLE IF NOT EXISTS Utilisateurs (
-    id_user INT PRIMARY KEY AUTO_INCREMENT,      -- Identifiant unique de l'utilisateur (clé primaire auto-incrémentée)
-    Nom VARCHAR(50),                             -- Nom de l'utilisateur
+    id_user INT PRIMARY KEY AUTO_INCREMENT,      
+    Nom VARCHAR(50),                             
     Prenom VARCHAR(50),                          -- Prénom de l'utilisateur
     Email VARCHAR(100) UNIQUE,                   -- Email unique (clé candidate)
     Date_de_naissance DATE,                      -- Date de naissance
@@ -66,6 +65,5 @@ CREATE TABLE IF NOT EXISTS Location_jeux (
     Date_retournee DATE,                         -- Date de retour réelle
     PRIMARY KEY (id_location, id_jeu),           -- Clé primaire composée : une ligne par jeu loué dans une location
     FOREIGN KEY (id_location) REFERENCES Locations(id_location) ON DELETE CASCADE,  -- Clé étrangère vers Locations
-    FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE        
-
+    FOREIGN KEY (id_jeu) REFERENCES Jeux(id_jeu) ON DELETE CASCADE       
 );

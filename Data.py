@@ -64,6 +64,18 @@ run_sql_file(db.cursor, 'bd_script/drop.sql')
 # Exécution du script SQL pour créer les tables
 run_sql_file(db.cursor, 'bd_script/up.sql')
 
+run_sql_file(db.cursor, 'bd_script/index.sql') 
+
+run_sql_file(db.cursor, 'bd_script/Trigger.sql')
+
+run_sql_file(db.cursor, 'bd_script/louer.sql')
+
+run_sql_file(db.cursor, 'bd_script/retourner.sql')
+
+run_sql_file(db.cursor, 'bd_script/create_facture.sql')
+
+
+
 print("Tables created successfully")  # Message de confirmation
 
 # Connexion à la base de données MySQL à partir des variables d’environnement
@@ -80,8 +92,12 @@ faker = Faker()  # Instanciation de Faker
 NB_ENTREES = 300  # Nombre de lignes à insérer dans chaque table
 
 # Insertion d'utilisateurs fictifs
-user_ids = []
+user_ids = []         # Ajoutez cette ligne pour initialiser la liste
+active_user_ids = []
+inactive_user_ids = []
+
 for _ in range(NB_ENTREES):
+    statut = random.choice([0, 1])
     cursor.execute(
         "INSERT INTO Utilisateurs (Nom, Prenom, Email, Date_de_naissance, Mot_de_passe, Statut) VALUES (%s, %s, %s, %s, %s, %s)",
         (
@@ -90,11 +106,16 @@ for _ in range(NB_ENTREES):
             f"{faker.user_name()}{random.randint(1000, 999999)}@example.com",
             faker.date_of_birth(minimum_age=18, maximum_age=60),
             faker.password(),
-            random.choice([0, 1])
+            statut
         )
     )
-    user_ids.append(cursor.lastrowid)  # Récupération de l’ID inséré
-
+    user_id = cursor.lastrowid
+    if statut == 1:
+        active_user_ids.append(user_id)
+    else:
+        inactive_user_ids.append(user_id)
+    user_ids.append(user_id)
+    
 # Insertion de jeux fictifs
 jeu_ids = []
 categories = ['Classique', 'Console', 'Ordinateur', 'Equipement']
@@ -123,13 +144,20 @@ while len(used_pairs) < NB_ENTREES:
     )    
     id_jeu = cursor.lastrowid
     jeu_ids.append(id_jeu)
-
-# Insertion de locations liées à des utilisateurs
+    
+    # Insertion de locations liées UNIQUEMENT à des utilisateurs ACTIFS
 location_ids = []
 for _ in range(NB_ENTREES):
-    id_user = random.choice(user_ids)
+    # Vérifier si nous avons des utilisateurs actifs
+    if not active_user_ids:
+        print("Attention: Aucun utilisateur actif disponible.")
+        break
+        
+    # Utiliser uniquement des utilisateurs actifs
+    id_user = random.choice(active_user_ids)
     cursor.execute("INSERT INTO Locations (id_user) VALUES (%s)", (id_user,))
     location_ids.append(cursor.lastrowid)
+
 
 # Insertion dans Location_jeux avec des paires (id_location, id_jeu) uniques
 used_pairs = set()

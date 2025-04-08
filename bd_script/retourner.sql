@@ -64,31 +64,6 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE retourner;
-
-
-INSERT INTO Utilisateurs (id_user, nom, prenom, email, mot_de_passe, statut)
-VALUES (1, 'Dupont', 'Jean', 'jean.dupont@test.com', 'pass123', 1);
-
--- Jeu
-INSERT INTO Jeux (id_jeu, Nom, Categorie, prix, quantite)
-VALUES (1, 'Échecs', 'Classique', 15.00, 10);
-
-CALL louer(1, 1, 1); -- Appel de la procédure pour louer le jeu
--- Location
-
--- Insérer une location (table Locations)
-INSERT INTO Locations (id_location, id_user)
-VALUES (3, 1);
-
--- Concerne (location du jeu avec date retour prévue dépassée pour simuler pénalité)
-INSERT INTO location_jeux (id_location, id_jeu, date_debut, date_retour_prevu, quantite)
-VALUES (3, 1, CURDATE() - INTERVAL 10 DAY, CURDATE() - INTERVAL 3 DAY, 1);
-
-
-CALL retourner(3, 1); -- Appel de la procédure pour retourner le jeu
-UPDATE Jeux
-SET Quantite = 9;
 /* 
     -Récupèrer la date de retour prévue les articles en location par quantité  -ok
     -Récupérer le plus grand nombre de jour de retard -ok
