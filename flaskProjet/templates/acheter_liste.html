@@ -25,7 +25,16 @@
           <td>{{ jeu.Nom }}</td>
           <td>{{ jeu.Prix }}</td>
           <td>{{ jeu.Quantite }}</td>
-          <td><a class="button" href="{{ url_for('acheter', id=jeu.id) }}">Acheter</a></td>
+          <td>
+            <!-- Bouton Acheter -->
+            <a class="button" href="{{ url_for('acheter', id_jeu=jeu.id_jeu) }}">Acheter</a>
+            <!-- Bouton Ajouter au panier -->
+            <form method="POST" action="{{ url_for('ajouter_au_panier') }}" style="display: inline;">
+              <input type="hidden" name="id_jeu" value="{{ jeu.id_jeu }}"> <!-- Utilisation de 'id_jeu' comme identifiant -->
+              <input type="hidden" name="quantite" value="1">
+              <button type="submit" class="button">Ajouter au panier</button>
+            </form>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

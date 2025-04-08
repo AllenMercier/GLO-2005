@@ -72,7 +72,6 @@
     <div class="login-container">
         <h2>Connexion</h2>
         
-        <!-- Affichage des messages flash -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
@@ -81,7 +80,6 @@
           {% endif %}
         {% endwith %}
         
-        <!-- Affichage de l'erreur, le cas échéant -->
         {% if error %}
             <div class="error">{{ error }}</div>
         {% endif %}
@@ -97,6 +95,9 @@
             </div>
             <button type="submit">Se connecter</button>
         </form>
+        <p class="signup-link">
+            Pas encore inscrit ? <a href="{{ url_for('register') }}">Créer un compte</a>
+        </p>
     </div>
 </body>
 </html>

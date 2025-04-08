@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Votre Panier{% endblock %}
+
+{% block content %}
+<main>
+  <h1>Votre Panier</h1>
+  {% if articles %}
+  <table>
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prix Unitaire</th>
+        <th>Quantité</th>
+        <th>Total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in articles %}
+      <tr>
+        <td>{{ article.Nom }}</td>
+        <td>{{ article.Prix }} $</td>
+        <td>{{ article.quantite_panier }}</td>
+        <td>{{ article.sous_total }} $</td>
+        <td>
+          <form method="POST" action="{{ url_for('supprimer_du_panier', id=article.id_jeu) }}">
+            <button type="submit" class="button">Supprimer</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><strong>Total : {{ total_panier }} $</strong></p>
+  <a href="{{ url_for('paiement') }}" class="button">Procéder au paiement</a>
+  {% else %}
+  <p>Votre panier est vide.</p>
+  {% endif %}
+</main>
+{% endblock %}

@@ -6,12 +6,10 @@
     <link rel="stylesheet" text="text/css" href="/static/styles.css">
 </head>
 <body>
-    <!-- Bandeau promotionnel -->
     <div class="promo-banner">
     <p>Livraison gratuite pour toutes les commandes de 100$ et plus avant taxes!</p>
     </div>
     
-    <!-- En-tête commun -->
     <header>
     <div class="header-content">
         <div class="logo">LOGO</div>
@@ -20,11 +18,17 @@
         <button>Rechercher</button>
         </div>
         <nav>
-        <ul>
-            <li><a href="{{ url_for('main') }}">Accueil</a></li>
-            <li><a href="{{ url_for('acheter') }}">Acheter</a></li>
-            <li><a href="{{ url_for('login') }}">Se connecter</a></li>
-        </ul>
+            <ul>
+                <li><a href="{{ url_for('main') }}">Accueil</a></li>
+                <li><a href="{{ url_for('acheter') }}">Acheter</a></li>
+                {% if session.user_email %}
+                    <li><a href="{{ url_for('panier') }}">Panier</a></li>
+                    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Se connecter</a></li>
+                    <li><a href="{{ url_for('register') }}">Inscription</a></li>
+                {% endif %}
+            </ul>
         </nav>
         <div class="lang-currency">
         <select>
