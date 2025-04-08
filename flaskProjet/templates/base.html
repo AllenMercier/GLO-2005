@@ -21,7 +21,7 @@
                 <ul>
                     <li><a href="{{ url_for('main') }}">Accueil</a></li>
                     <li><a href="{{ url_for('acheter') }}">Acheter</a></li>
-                    {% if session.get('user_id') %}
+                    {% if session.get('user_email') %}
                         <li><a href="{{ url_for('panier') }}">Panier</a></li>
                         <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
                     {% else %}
