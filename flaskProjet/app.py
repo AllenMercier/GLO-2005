@@ -11,9 +11,11 @@ import csv
 # Chargement des variables d'environnement
 load_dotenv()
 
+# Initialisation de l'application Flask
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "maCleSecrete")
 
+# Connexion à la base de données
 try:
     conn = pymysql.connect(
         host=os.environ.get("HOST"),
@@ -28,14 +30,18 @@ except Exception as e:
 
 cursor = conn.cursor()
 
+# Route principale (page d'accueil)
 @app.route('/')
 def main():
     return render_template('acceuil.html')
 
+# Route pour afficher les jeux disponibles et gérer les achats
 @app.route('/acheter', methods=["GET", "POST"])
 def acheter():
+    # Récupère l'ID du jeu depuis les paramètres de l'URL
     game_id = request.args.get("id")
     if game_id:
+        # Récupère les détails du jeu sélectionné
         query = "SELECT * FROM Jeux WHERE id = %s;"
         cursor.execute(query, (game_id,))
         jeu = cursor.fetchone()
@@ -44,7 +50,7 @@ def acheter():
             return redirect(url_for("acheter"))
         if request.method == "POST":
             try:
-                quantite = int(request.form.get("quantite"))
+                quantite = int(request.form.get("quantite")) # Quantité demandée
                 if quantite < 1 or quantite > jeu["Quantite"]:
                     flash("Quantité invalide.", "error")
                 else:
@@ -54,6 +60,7 @@ def acheter():
                 flash(f"Une erreur est survenue : {str(e)}", "error")
         return render_template("acheter_detail.html", jeu=jeu)
     else:
+        # Récupère tous les jeux pour les afficher dans une liste
         query = "SELECT * FROM Jeux;"
         cursor.execute(query)
         jeux = cursor.fetchall()
@@ -63,21 +70,24 @@ def acheter():
             jeux_par_categorie[cat] = [jeu for jeu in jeux if jeu["Categorie"] == cat]
         return render_template("acheter_liste.html", jeux_par_categorie=jeux_par_categorie)
 
+# Route pour gérer la connexion des utilisateurs
 @app.route('/login', methods=["GET", "POST"])
 def login():
     error = None
     if request.method == "POST":
-        email = request.form.get("email")
-        password = request.form.get("password")
+        email = request.form.get("email") # Récupère l'email depuis le formulaire
+        password = request.form.get("password")  # Récupère le mot de passe depuis le formulaire
         try:
+            # Vérifie si l'utilisateur existe dans la base de données
             query = "SELECT Email, Nom, Prenom, Mot_de_passe FROM Utilisateurs WHERE Email = %s"
-            cursor.execute(query, (email,))
+            cursor.execute(query, (email,))  
             user = cursor.fetchone()
             if user is None:
                 error = "Utilisateur non trouvé."
             elif not sha256_crypt.verify(password, user["Mot_de_passe"]):
                 error = "Mot de passe incorrect."
             else:
+                # Stocke les informations de l'utilisateur dans la session
                 session["user_email"] = user["Email"]
                 session["user_name"] = f"{user['Prenom']} {user['Nom']}"
                 flash("Connexion réussie !", "success")
@@ -86,6 +96,7 @@ def login():
             error = f"Une erreur s'est produite : {str(e)}"
     return render_template("login.html", error=error)
 
+# Route pour gérer l'inscription des utilisateurs
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -128,6 +139,7 @@ def register():
     
     return render_template("Inscription.html")
 
+# Route pour ajouter un jeu au panier
 @app.route('/ajouter_au_panier', methods=["POST"])
 def ajouter_au_panier():
     if "user_email" not in session:
@@ -135,10 +147,11 @@ def ajouter_au_panier():
         return redirect(url_for("login"))
 
     try:
-        id_jeu = str(request.form.get("id_jeu")) 
-        quantite = max(1, int(request.form.get("quantite", 1)))
+        id_jeu = str(request.form.get("id_jeu"))  # Récupère l'ID du jeu
+        quantite = max(1, int(request.form.get("quantite", 1))) # Quantité minimale de 1
         action = request.form.get("action", "ajouter_panier")
 
+        # Récupère les informations du jeu
         cursor.execute("SELECT Nom, Quantite, Prix FROM Jeux WHERE id_jeu = %s", (id_jeu,))
         jeu = cursor.fetchone()
         
@@ -169,6 +182,7 @@ def ajouter_au_panier():
         flash("Erreur technique", "error")
         return redirect(url_for("acheter"))
     
+# Route pour afficher le panier
 @app.route('/panier')
 def panier():
     if "user_email" not in session:
@@ -213,6 +227,7 @@ def panier():
         app.logger.error(f"Erreur panier: {str(e)}")
         return render_template("panier.html", articles=[], total_panier=0)
     
+# Route pour supprimer un article du panier
 @app.route('/supprimer_du_panier/<id>', methods=["POST"])
 def supprimer_du_panier(id):
     panier = session.get("panier", {})
@@ -227,6 +242,7 @@ def supprimer_du_panier(id):
     
     return redirect(url_for("panier"))
     
+# Route pour gérer le paiement
 @app.route('/paiement', methods=["GET", "POST"])
 def paiement():
     if "user_email" not in session:
@@ -254,6 +270,7 @@ def paiement():
     
     return render_template("paiement.html")
 
+# Route pour déconnecter l'utilisateur
 @app.route('/logout')
 def logout():
     session.clear()
