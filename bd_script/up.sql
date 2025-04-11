@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
     Prenom VARCHAR(50),                          -- Prénom de l'utilisateur
     Email VARCHAR(100) UNIQUE,                   -- Email unique (clé candidate)
     Date_de_naissance DATE,                      -- Date de naissance
-    Mot_de_passe VARCHAR(255),                   -- Mot de passe (non chiffré ici, attention)
+    Mot_de_passe VARCHAR(255) NOT NULL,                   -- Mot de passe (non chiffré ici, attention)
     Statut BOOLEAN                               -- Statut de l'utilisateur (actif/inactif)
 );
 

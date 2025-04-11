@@ -1,41 +1,42 @@
-{% extends "base.html" %}
-
-{% block title %}Votre Panier{% endblock %}
-
-{% block content %}
-<main>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Votre Panier</title>
+  <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
   <h1>Votre Panier</h1>
+
+  <!-- Affichage des messages flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="flash {{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
   {% if articles %}
-  <table>
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Prix Unitaire</th>
-        <th>Quantité</th>
-        <th>Total</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for article in articles %}
-      <tr>
-        <td>{{ article.Nom }}</td>
-        <td>{{ article.Prix }} $</td>
-        <td>{{ article.quantite_panier }}</td>
-        <td>{{ article.sous_total }} $</td>
-        <td>
-          <form method="POST" action="{{ url_for('supprimer_du_panier', id=article.id_jeu) }}">
-            <button type="submit" class="button">Supprimer</button>
-          </form>
-        </td>
-      </tr>
+    <table>
+      <tr><th>Jeu</th><th>Quantité</th><th>Sous-total</th></tr>
+      {% for art in articles %}
+        <tr>
+          <td>{{ art.Nom }}</td>
+          <td>{{ art.quantite_panier }}</td>
+          <td>{{ art.sous_total }}$</td>
+        </tr>
       {% endfor %}
-    </tbody>
-  </table>
-  <p><strong>Total : {{ total_panier }} $</strong></p>
-  <a href="{{ url_for('paiement') }}" class="button">Procéder au paiement</a>
+      <tr><td colspan="2"><strong>Total</strong></td><td>{{ total_panier }}$</td></tr>
+    </table>
+    <form action="{{ url_for('paiement') }}" method="post">
+      <button type="submit">Payer</button>
+    </form>
   {% else %}
-  <p>Votre panier est vide.</p>
+    <p>Votre panier est vide.</p>
   {% endif %}
-</main>
-{% endblock %}
+
+</body>
+</html>
