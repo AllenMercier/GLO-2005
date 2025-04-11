@@ -250,23 +250,34 @@ def paiement():
         return redirect(url_for("login"))
     
     if request.method == "POST":
-        panier = session.get("panier", {})
-        for id_jeu, quantite in panier.items():
-            cursor.execute("SELECT Quantite FROM Jeux WHERE id = %s", (id_jeu,))
-            jeu = cursor.fetchone()
-            if not jeu or quantite > jeu["Quantite"]:
-                flash("Stock insuffisant pour un ou plusieurs articles.", "error")
-                return redirect(url_for("panier"))
+        try:
+            panier = session.get("panier", {})
+            for id_jeu, quantite in panier.items():
+                # Vérifie la disponibilité du stock
+                cursor.execute("SELECT Quantite FROM Jeux WHERE id = %s", (id_jeu,))
+                jeu = cursor.fetchone()
+                if not jeu or quantite > jeu["Quantite"]:
+                    flash("Stock insuffisant pour un ou plusieurs articles.", "error")
+                    return redirect(url_for("panier"))
+                
+                # Met à jour le stock
+                cursor.execute(
+                    "UPDATE Jeux SET Quantite = Quantite - %s WHERE id = %s",
+                    (quantite, id_jeu)
+                )
             
-            cursor.execute(
-                "UPDATE Jeux SET Quantite = Quantite - %s WHERE id = %s",
-                (quantite, id_jeu)
-            )
+            # Vide le panier et valide la transaction
+            session.pop("panier", None)
+            conn.commit()
+            flash("Paiement effectué avec succès !", "success")
+            return redirect(url_for("acheter"))
         
-        session.pop("panier", None)
-        conn.commit()
-        flash("Paiement effectué avec succès !", "success")
-        return redirect(url_for("acheter"))
+        except Exception as e:
+            # Gestion des erreurs
+            conn.rollback()  # Annule les modifications en cas d'erreur
+            app.logger.error(f"Erreur lors du paiement : {str(e)}")
+            flash("Une erreur technique est survenue. Veuillez réessayer.", "error")
+            return redirect(url_for("panier"))
     
     return render_template("paiement.html")
 
