@@ -5,6 +5,7 @@ import pymysql
 import pymysql.cursors
 from dotenv import load_dotenv
 from passlib.hash import sha256_crypt
+from datetime import datetime
 
 # Chargement des variables d'environnement
 load_dotenv()
@@ -273,6 +274,81 @@ def panier_success():
         flash(f"Erreur lors de la finalisation: {str(e)}", "error")
     
     return redirect(url_for('main'))
+
+@app.route('/mes-locations')
+def mes_locations():
+    # Vérifier si l'utilisateur est connecté
+    if 'user_email' not in session:
+        flash("Veuillez vous connecter pour voir vos locations.", "error")
+        return redirect(url_for('login'))
+    
+    # Récupérer les locations de l'utilisateur
+    cursor.execute("""
+        SELECT l.*, j.Nom as nom_jeu, j.Prix as prix_jeu 
+        FROM Locations l
+        JOIN Jeux j ON l.id_jeu = j.id_jeu
+        WHERE l.email_utilisateur = %s
+        ORDER BY l.date_debut DESC
+    """, (session['user_email'],))
+    
+    locations = cursor.fetchall()
+    
+    return render_template('mes_locations.html', locations=locations)
+
+@app.route('/louer/<int:id>', methods=['GET', 'POST'])
+def louer(id):
+    # Vérifier si l'utilisateur est connecté
+    if 'user_email' not in session:
+        flash("Veuillez vous connecter pour louer un jeu.", "error")
+        return redirect(url_for('login'))
+    
+    # Récupérer les informations du jeu
+    cursor.execute("SELECT * FROM Jeux WHERE id_jeu = %s", (id,))
+    jeu = cursor.fetchone()
+    
+    if not jeu:
+        flash("Ce jeu n'existe pas", 'error')
+        return redirect(url_for('acheter'))
+    
+    if request.method == 'POST':
+        date_debut = request.form.get('date_debut')
+        date_fin = request.form.get('date_fin')
+        
+        # Validation des dates
+        try:
+            debut = datetime.strptime(date_debut, '%Y-%m-%d').date()
+            fin = datetime.strptime(date_fin, '%Y-%m-%d').date()
+            
+            if debut < datetime.now().date():
+                flash("La date de début ne peut pas être dans le passé", 'error')
+                return render_template('louer.html', jeu=jeu, now=datetime.now())
+                
+            if fin <= debut:
+                flash("La date de fin doit être après la date de début", 'error')
+                return render_template('louer.html', jeu=jeu, now=datetime.now())
+            
+            # Calculer le nombre de jours
+            nb_jours = (fin - debut).days
+            
+            # Calculer le prix (exemple: 10% du prix d'achat par jour)
+            prix_par_jour = float(jeu['Prix']) * 0.1
+            prix_total = prix_par_jour * nb_jours
+            
+            # Enregistrer la location
+            cursor.execute("""
+                INSERT INTO Locations 
+                (email_utilisateur, id_jeu, date_debut, date_fin, prix_total, status)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (session['user_email'], id, date_debut, date_fin, prix_total, 'active'))
+            
+            flash(f"Location de {jeu['Nom']} enregistrée avec succès !", "success")
+            return redirect(url_for('mes_locations'))
+            
+        except Exception as e:
+            flash(f"Erreur lors de la location : {str(e)}", 'error')
+            return render_template('louer.html', jeu=jeu, now=datetime.now())
+    
+    return render_template('louer.html', jeu=jeu, now=datetime.now())
 
 @app.route('/logout')
 def logout():

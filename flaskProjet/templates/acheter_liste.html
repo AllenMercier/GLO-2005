@@ -19,7 +19,6 @@
               <form action="{{ url_for('acheter_detail', id=jeu.id_jeu) }}" method="post">
                 <button type="submit" class="button">Acheter</button>
               </form>
-              <!-- Vérifier les paramètres passés -->
               <button onclick="addToCart('{{ jeu.id_jeu }}', '{{ jeu.Nom }}', {{ jeu.Prix }}, {{ jeu.Quantite }})" class="button secondary">
                 Ajouter au panier
               </button>

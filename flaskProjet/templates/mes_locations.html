@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Mes Locations{% endblock %}
+
+{% block content %}
+<main>
+  <h1>Mes Locations</h1>
+  
+  {% if locations %}
+    <div class="locations-container">
+      <table class="locations-table">
+        <thead>
+          <tr>
+            <th>Jeu</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th>Prix total</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for location in locations %}
+            <tr>
+              <td>{{ location.nom_jeu }}</td>
+              <td>{{ location.date_debut.strftime('%d/%m/%Y') if location.date_debut else '' }}</td>
+              <td>{{ location.date_fin.strftime('%d/%m/%Y') if location.date_fin else '' }}</td>
+              <td>{{ location.prix_total }}$</td>
+              <td>
+                <span class="status status-{{ location.status }}">{{ location.status }}</span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <p>Vous n'avez pas encore de location.</p>
+      <a href="{{ url_for('acheter') }}" class="button">Parcourir les jeux disponibles</a>
+    </div>
+  {% endif %}
+</main>
+
+<style>
+  .locations-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .locations-table th, .locations-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .locations-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .status {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+  }
+  
+  .status-active {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .status-terminée {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .status-annulée {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+  }
+</style>
+{% endblock %}
