@@ -29,6 +29,7 @@
                         <li><a href="{{ url_for('register') }}">Inscription</a></li>
                     {% endif %}
                 </ul>
+                <span id="cart-count">0</span>
             </nav>
             <div class="lang-currency">
                 <select>
@@ -42,6 +43,13 @@
             </div>
         </div>
     </header>
+    
+    <nav>
+        <!-- autres liens -->
+        <a href="{{ url_for('panier') }}">
+            Panier <span id="cart-count">0</span>
+        </a>
+    </nav>
     
     <div class="page-content">
         {% block content %}{% endblock %}

@@ -1,42 +1,39 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Votre Panier</title>
-  <link rel="stylesheet" href="../static/styles.css">
-</head>
-<body>
-  <h1>Votre Panier</h1>
+{% extends "base.html" %}
 
-  <!-- Affichage des messages flash -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      <ul class="flashes">
-        {% for category, message in messages %}
-          <li class="flash {{ category }}">{{ message }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+{% block title %}Votre Panier{% endblock %}
 
-  {% if articles %}
-    <table>
-      <tr><th>Jeu</th><th>Quantité</th><th>Sous-total</th></tr>
-      {% for art in articles %}
-        <tr>
-          <td>{{ art.Nom }}</td>
-          <td>{{ art.quantite_panier }}</td>
-          <td>{{ art.sous_total }}$</td>
-        </tr>
-      {% endfor %}
-      <tr><td colspan="2"><strong>Total</strong></td><td>{{ total_panier }}$</td></tr>
-    </table>
-    <form action="{{ url_for('paiement') }}" method="post">
-      <button type="submit">Payer</button>
-    </form>
-  {% else %}
-    <p>Votre panier est vide.</p>
-  {% endif %}
+{% block content %}
+<h1>Votre Panier</h1>
 
-</body>
-</html>
+<div id="panier-content">
+  <table>
+    <thead>
+      <tr>
+        <th>Jeu</th>
+        <th>Quantité</th>
+        <th>Prix unitaire</th>
+        <th>Sous-total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="panier-items">
+      <!-- Le contenu du panier sera inséré ici -->
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4"><strong>Total</strong></td>
+        <td id="panier-total">0.00$</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="actions">
+    <button onclick="effectuerPaiement()" class="button">Payer</button>
+  </div>
+</div>
+
+<p id="panier-vide" style="display: none;">Votre panier est vide.</p>
+
+<!-- Inclusion du JavaScript -->
+<script src="{{ url_for('static', filename='js/panier.js') }}"></script>
+{% endblock %}
