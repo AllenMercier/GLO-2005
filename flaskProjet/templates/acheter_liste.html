@@ -1,48 +1,39 @@
 {% extends "base.html" %}
-
 {% block title %}Acheter des Jeux Vidéo{% endblock %}
 
 {% block content %}
 <main>
   <h1 class="page-title">Acheter des Jeux Vidéo</h1>
-  
-  {% for categorie, jeux in jeux_par_categorie.items() %}
-  <section class="categorie-section">
-    <h2 class="categorie-title">{{ categorie }}</h2>
-    {% if jeux %}
-    <table class="jeu-table">
-      <thead>
-        <tr>
-          <th>Nom</th>
-          <th>Prix ($)</th>
-          <th>Quantité</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for jeu in jeux %}
-        <tr>
-          <td>{{ jeu.Nom }}</td>
-          <td>{{ jeu.Prix }}</td>
-          <td>{{ jeu.Quantite }}</td>
-          <td>
-            <!-- Bouton Acheter -->
-            <a class="button" href="{{ url_for('acheter', id_jeu=jeu.id_jeu) }}">Acheter</a>
-            <!-- Bouton Ajouter au panier -->
-            <form method="POST" action="{{ url_for('ajouter_au_panier') }}" style="display: inline;">
-              <input type="hidden" name="id_jeu" value="{{ jeu.id_jeu }}"> <!-- Utilisation de 'id_jeu' comme identifiant -->
-              <input type="hidden" name="quantite" value="1">
-              <button type="submit" class="button">Ajouter au panier</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <p class="aucun-jeu">Aucun jeu disponible dans cette catégorie.</p>
-    {% endif %}
-  </section>
-  {% endfor %}
+  <div class="cards-grid">
+    {% for categorie, jeux in jeux_par_categorie.items() %}
+      {% for jeu in jeux %}
+        <div class="card" data-cat="{{ categorie }}">
+          <div class="card-image">
+            <div class="placeholder-img">Image</div>
+          </div>
+          <div class="card-content">
+            <h3>{{ jeu.Nom }}</h3>
+            <p class="price">{{ jeu.Prix }} $</p>
+            <p class="stock">Stock : {{ jeu.Quantite }}</p>
+            <div class="card-actions">
+              <a class="button" href="{{ url_for('acheter', id=jeu.id) }}">Acheter</a>
+              <button class="button secondary" onclick="addToCart({{ jeu.id }}, '{{ jeu.Nom }}')">
+                Ajouter au panier
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
 </main>
+
+<script>
+function addToCart(id, name) {
+  let cart = JSON.parse(localStorage.getItem('cart')||'[]');
+  cart.push({id, name});
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert(name + ' ajouté au panier.');
+}
+</script>
 {% endblock %}
