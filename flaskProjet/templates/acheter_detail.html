@@ -13,6 +13,11 @@
       <br><br>
       <button type="submit" class="button">Acheter</button>
     </form>
+    <div class="product-actions">
+      <form action="{{ url_for('ajouter_au_panier', id=jeu.id_jeu) }}" method="post">
+        <button type="submit" class="button">Ajouter au panier</button>
+      </form>
+    </div>
     <p style="margin-top:15px;">
       <a class="button small" href="{{ url_for('acheter', cat=current_cat) }}">← Retour</a>
     </p>

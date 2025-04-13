@@ -1,31 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Mes Locations{% endblock %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/locations.css') }}">
+{% endblock %}
+
 {% block content %}
 <main>
-  <h1>Mes Locations</h1>
+  <h1 class="page-title">Mes Locations</h1>
   
   {% if locations %}
-    <div class="locations-container">
-      <table class="locations-table">
+    <div class="content-section">
+      <table class="data-table">
         <thead>
           <tr>
             <th>Jeu</th>
+            <th>Quantité</th>
             <th>Date de début</th>
-            <th>Date de fin</th>
+            <th>Date de retour prévue</th>
             <th>Prix total</th>
             <th>Statut</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {% for location in locations %}
-            <tr>
+            <tr class="status-{{ location.status }}">
               <td>{{ location.nom_jeu }}</td>
-              <td>{{ location.date_debut.strftime('%d/%m/%Y') if location.date_debut else '' }}</td>
-              <td>{{ location.date_fin.strftime('%d/%m/%Y') if location.date_fin else '' }}</td>
-              <td>{{ location.prix_total }}$</td>
+              <td>{{ location.Quantite }}</td>
+              <td>{{ location.Date_debut.strftime('%d/%m/%Y') if location.Date_debut else '' }}</td>
+              <td>{{ location.Date_retour_prevu.strftime('%d/%m/%Y') if location.Date_retour_prevu else '' }}</td>
+              <td>{{ "%.2f"|format(location.prix_location) }} $</td>
               <td>
-                <span class="status status-{{ location.status }}">{{ location.status }}</span>
+                <span class="pill pill-{{ location.status }}">
+                  {{ location.status }}
+                  {% if location.status == 'terminée' %}
+                    (retourné le {{ location.Date_retournee.strftime('%d/%m/%Y') }})
+                  {% endif %}
+                </span>
+              </td>
+              <td>
+                {% if location.status == 'active' or location.status == 'en retard' %}
+                  <form action="{{ url_for('retourner_location') }}" method="post" class="retour-form">
+                    <input type="hidden" name="id_location" value="{{ location.id_location }}">
+                    <button type="submit" class="button secondary button-small">Retourner</button>
+                  </form>
+                {% endif %}
               </td>
             </tr>
           {% endfor %}
@@ -33,54 +54,123 @@
       </table>
     </div>
   {% else %}
-    <div class="empty-state">
-      <p>Vous n'avez pas encore de location.</p>
+    <p class="aucun-jeu">Vous n'avez pas encore de location.</p>
+    <div class="card-actions" style="width: 300px; margin: 20px auto;">
       <a href="{{ url_for('acheter') }}" class="button">Parcourir les jeux disponibles</a>
     </div>
   {% endif %}
 </main>
 
 <style>
-  .locations-table {
+  /* Page title styles (matching existing) */
+  .page-title {
+    text-align: center;
+    margin: 30px 0;
+    color: #007BFF;
+    font-size: 2em;
+  }
+  
+  /* Data table with card-like styling */
+  .content-section {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .data-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
   }
   
-  .locations-table th, .locations-table td {
-    padding: 10px;
+  .data-table th, 
+  .data-table td {
+    padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e0e0e0;
   }
   
-  .locations-table th {
-    background-color: #f2f2f2;
+  .data-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #333;
   }
   
-  .status {
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
+  .data-table tr:hover {
+    background-color: #f9f9f9;
   }
   
-  .status-active {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .status-terminée {
-    background-color: #2196F3;
-    color: white;
-  }
-  
-  .status-annulée {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .empty-state {
+  /* Status styling with pills */
+  .pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
     text-align: center;
-    padding: 40px 20px;
+  }
+  
+  .pill-active {
+    background-color: #007BFF;
+    color: white;
+  }
+  
+  .pill-en-retard {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .pill-terminée {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  /* Empty state, matching "aucun-jeu" */
+  .aucun-jeu {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    margin-top: 40px;
+  }
+  
+  /* Status row highlighting */
+  .data-table tr.status-active {
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+  
+  .data-table tr.status-en-retard {
+    background-color: rgba(220, 53, 69, 0.05);
+  }
+  
+  /* Button styles */
+  .button-small {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+  }
+  
+  /* Form in table */
+  .retour-form {
+    margin: 0;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .data-table {
+      font-size: 0.9rem;
+    }
+    
+    .data-table th, 
+    .data-table td {
+      padding: 10px 8px;
+    }
+    
+    .pill {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
   }
 </style>
 {% endblock %}

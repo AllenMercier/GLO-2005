@@ -1,39 +1,141 @@
 {% extends "base.html" %}
-
 {% block title %}Votre Panier{% endblock %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/locations.css') }}">
+{% endblock %}
+
 {% block content %}
-<h1>Votre Panier</h1>
-
-<div id="panier-content">
-  <table>
-    <thead>
-      <tr>
-        <th>Jeu</th>
-        <th>Quantité</th>
-        <th>Prix unitaire</th>
-        <th>Sous-total</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="panier-items">
-      <!-- Le contenu du panier sera inséré ici -->
-    </tbody>
-    <tfoot>
-      <tr>
-        <td colspan="4"><strong>Total</strong></td>
-        <td id="panier-total">0.00$</td>
-      </tr>
-    </tfoot>
-  </table>
-
-  <div class="actions">
-    <button onclick="effectuerPaiement()" class="button">Payer</button>
+<main>
+  <h1 class="page-title">Votre Panier</h1>
+  
+  <div class="info-message" id="limite-panier">
+    <p><i class="fas fa-info-circle"></i> Note: Maximum 5 articles au total dans le panier.</p>
   </div>
-</div>
+  
+  <div id="panier-content" class="content-section">
+    <table id="panier-table" class="data-table">
+      <thead>
+        <tr>
+          <th>Jeu</th>
+          <th>Prix unitaire</th>
+          <th>Quantité</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="panier-items">
+        <!-- Les articles du panier seront ajoutés ici via JavaScript -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-right"><strong>Total:</strong></td>
+          <td id="panier-total">0.00 $</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    
+    <div class="actions">
+      <button onclick="viderPanier()" class="button secondary">Vider le panier</button>
+      <form id="checkout-form" action="{{ url_for('paiement') }}" method="post" style="display: inline;">
+        <input type="hidden" name="confirm_panier" value="1">
+        <!-- Les éléments du panier seront ajoutés ici dynamiquement -->
+        <div id="hidden-items-container"></div>
+        <button type="submit" class="button" id="checkout-button">
+          Procéder au paiement
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <div id="panier-vide" style="display: none;">
+    <p class="aucun-jeu">Votre panier est vide.</p>
+    <div class="card-actions">
+      <a href="{{ url_for('acheter') }}" class="button">Parcourir les jeux disponibles</a>
+    </div>
+  </div>
+</main>
 
-<p id="panier-vide" style="display: none;">Votre panier est vide.</p>
+<!-- Inclusion du fichier JavaScript externe -->
+<script src="{{ url_for('static', filename='panier.js') }}"></script>
+<script>
+// Fonction pour vérifier et nettoyer le panier si nécessaire
+function verifierCoherencePanier() {
+  const panier = JSON.parse(localStorage.getItem('cart') || '[]');
+  
+  // Si le panier est vide, s'assurer que le formulaire et l'interface sont cohérents
+  if (panier.length === 0) {
+    document.getElementById('panier-content').style.display = 'none';
+    document.getElementById('panier-vide').style.display = 'block';
+    document.getElementById('panier-total').textContent = '0.00 $';
+    
+    // Informer le serveur
+    fetch('/vider-panier-api', { method: 'POST' })
+      .then(response => console.log('Panier vidé côté serveur'))
+      .catch(err => console.error('Erreur synchronisation:', err));
+    
+    return false;
+  }
+  
+  return true;
+}
 
-<!-- Inclusion du JavaScript -->
-<script src="{{ url_for('static', filename='js/panier.js') }}"></script>
+// Fonction pour mettre à jour les champs cachés du formulaire avec les éléments du panier
+function updateCheckoutForm() {
+  const panier = JSON.parse(localStorage.getItem('cart') || '[]');
+  const container = document.getElementById('hidden-items-container');
+  const checkoutButton = document.getElementById('checkout-button');
+  
+  // Vérifier d'abord la cohérence du panier
+  if (!verifierCoherencePanier() && panier.length === 0) {
+    checkoutButton.innerHTML = 'Procéder au paiement';
+    checkoutButton.disabled = true;
+    return;
+  }
+  
+  // Vider le conteneur
+  container.innerHTML = '';
+  
+  // Calculer le total
+  let total = 0;
+  
+  // Ajouter les éléments du panier
+  panier.forEach(item => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'items[]';
+    input.value = `${item.id}:${item.name}:${item.price}:${item.quantity}`;
+    container.appendChild(input);
+    
+    total += item.price * item.quantity;
+  });
+  
+  // Mettre à jour le texte du bouton
+  checkoutButton.innerHTML = `Procéder au paiement`;
+  
+  // Désactiver le bouton si le panier est vide
+  if (panier.length === 0) {
+    checkoutButton.disabled = true;
+  } else {
+    checkoutButton.disabled = false;
+  }
+  
+  console.log("Formulaire mis à jour avec", panier.length, "articles pour un total de", total.toFixed(2), "$");
+}
+
+// Mettre à jour le formulaire lorsque la page est chargée
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("DOM chargé, mise à jour du formulaire et vérification de cohérence");
+  verifierCoherencePanier();
+  updateCheckoutForm();
+  
+  // Écouter les changements dans le panier
+  window.addEventListener('cartUpdated', function() {
+    console.log("Événement cartUpdated détecté");
+    updateCheckoutForm();
+  });
+});
+</script>
 {% endblock %}

@@ -1,0 +1,253 @@
+/* Styles pour la page des locations */
+
+/* Page title styles */
+.page-title {
+  text-align: center;
+  margin: 30px 0;
+  color: #007BFF;
+  font-size: 2em;
+}
+
+/* Data table with card-like styling */
+.content-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, 
+.data-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.data-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Status styling with pills */
+.pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.pill-active {
+  background-color: #007BFF;
+  color: white;
+}
+
+.pill-en-retard {
+  background-color: #dc3545;
+  color: white;
+}
+
+.pill-terminée {
+  background-color: #28a745;
+  color: white;
+}
+
+/* Empty state, matching "aucun-jeu" */
+.aucun-jeu {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  margin-top: 40px;
+}
+
+/* Styles pour le panier vide */
+#panier-vide .card-actions {
+  width: 300px;
+  margin: 20px auto;
+}
+
+/* Status row highlighting */
+.data-table tr.status-active {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.data-table tr.status-en-retard {
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Button styles */
+.button-small {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+}
+
+/* Form in table */
+.retour-form {
+  margin: 0;
+}
+
+/* Ajout des styles pour les messages d'information */
+.info-message {
+  background-color: #e7f3ff;
+  border-left: 4px solid #007BFF;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.info-message p {
+  margin: 0;
+  color: #0056b3;
+}
+
+.warning-message {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.warning-message p {
+  margin: 0;
+  color: #856404;
+}
+
+/* Style pour le formulaire de paiement */
+.paiement-form {
+  display: inline-block;
+  margin: 0;
+}
+
+/* Styles pour les boutons dans les actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 15px;
+}
+
+.actions .button {
+  padding: 8px 15px;
+}
+
+{% extends "base.html" %}
+{% block title %}Votre Panier{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/locations.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="page-title">Votre Panier</h1>
+  
+  <div class="info-message" id="limite-panier">
+    <p><i class="fas fa-info-circle"></i> Note: Maximum 5 articles au total dans le panier.</p>
+  </div>
+  
+  <div id="panier-content" class="content-section">
+    <table id="panier-table" class="data-table">
+      <thead>
+        <tr>
+          <th>Jeu</th>
+          <th>Prix unitaire</th>
+          <th>Quantité</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="panier-items">
+        <!-- Les articles du panier seront ajoutés ici via JavaScript -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="text-right"><strong>Total:</strong></td>
+          <td id="panier-total">0.00 $</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    
+    <div class="actions">
+      <button onclick="viderPanier()" class="button secondary">Vider le panier</button>
+      <button onclick="effectuerPaiement()" class="button">Procéder au paiement</button>
+    </div>
+  </div>
+  
+  <div id="panier-vide" style="display: none;">
+    <p class="aucun-jeu">Votre panier est vide.</p>
+    <div class="card-actions">
+      <a href="{{ url_for('acheter') }}" class="button">Parcourir les jeux disponibles</a>
+    </div>
+  </div>
+</main>
+
+<!-- Stockage de l'URL de paiement pour JavaScript -->
+<div id="paiement-url" data-url="{{ url_for('paiement_page') }}" style="display: none;"></div>
+
+<!-- Inclusion du fichier JavaScript externe -->
+<script src="{{ url_for('static', filename='js/panier.js') }}"></script>
+{% endblock %}
+
+/* Styles pour le contrôle de quantité dans le panier */
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 0 8px;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .data-table {
+    font-size: 0.9rem;
+  }
+  
+  .data-table th, 
+  .data-table td {
+    padding: 10px 8px;
+  }
+  
+  .pill {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}
