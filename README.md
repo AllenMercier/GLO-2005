@@ -29,10 +29,17 @@ Créez un fichier .env à la racine du projet, puis ajoutez-y les variables suiv
    - Date: n'importe quelle date future
    - CVC: n'importe quel code à 3 chiffres
 
-## 🚀 Lancement de l'application
-Exécutez l'application Flask avec la commande suivante :
+## 🗄️ Initialisation de la base de données
+Avant de lancer l'application, il faut initialiser la base de données avec les tables requises et les données de test :
 
-    python app.py
+    python Data.py
+
+Cette commande crée toutes les tables nécessaires, les procédures stockées et insère un ensemble de données de test.
+
+## 🚀 Lancement de l'application
+Après avoir initialisé la base de données, exécutez l'application Flask avec la commande suivante :
+
+    python flaskProjet/app.py
 
 ## 🌐 Accès à l'application
 Ouvrez votre navigateur et accédez à :
