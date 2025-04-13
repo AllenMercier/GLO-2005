@@ -1,0 +1,110 @@
+/* Page title */
+.page-title {
+    text-align: center;
+    margin: 30px 0;
+    color: #007BFF;
+    font-size: 2em;
+  }
+  
+  /* Category section */
+  .categorie-section {
+    margin-bottom: 40px;
+  }
+  .categorie-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+  }
+  
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Card */
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Image placeholder */
+  .card-image {
+    background: #eee;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .placeholder-img {
+    color: #aaa;
+  }
+  
+  /* Content */
+  .card-content {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-content h3 {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    flex: 1;
+  }
+  .price {
+    font-weight: bold;
+    color: #007BFF;
+    margin-bottom: 5px;
+  }
+  .stock {
+    font-size: .9em;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  /* Actions */
+  .card-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .button {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    background: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background .3s ease;
+  }
+  .button:hover {
+    background: #0056b3;
+  }
+  .secondary {
+    background: #6c757d;
+  }
+  .secondary:hover {
+    background: #5a6268;
+  }
+  
+  /* No games */
+  .aucun-jeu {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+  }
+  

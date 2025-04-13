@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Paiement réussi{% endblock %}
+
+{% block content %}
+<main>
+  <div class="content-section success-message">
+    <h1>Paiement réussi !</h1>
+    <div class="success-icon">✅</div>
+    <p>Votre location a été confirmée avec succès.</p>
+    <p>Vous pouvez consulter vos jeux loués dans votre section <a href="{{ url_for('mes_locations') }}">Mes Locations</a>.</p>
+    <div class="actions">
+      <a href="{{ url_for('main') }}" class="button">Retour à l'accueil</a>
+      <a href="{{ url_for('acheter') }}" class="button secondary">Continuer mes achats</a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Vider le panier dans localStorage quand la page est chargée
+  document.addEventListener('DOMContentLoaded', function() {
+    // Vider le panier
+    localStorage.setItem('cart', '[]');
+    console.log('Panier réinitialisé après paiement réussi');
+    
+    // Mettre à jour le compteur d'articles
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+      cartCountElement.textContent = '0';
+    }
+    
+    // Informer l'utilisateur que le panier a été vidé
+    console.log('Votre panier a été vidé. Merci pour votre achat !');
+  });
+</script>
+{% endblock %}

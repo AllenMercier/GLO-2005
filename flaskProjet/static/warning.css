@@ -1,0 +1,57 @@
+/* Styles pour les messages d'avertissement et les actions */
+
+/* Message d'avertissement avec bordure jaune */
+.warning-message {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.warning-message p {
+  margin: 0;
+  color: #856404;
+}
+
+/* Alignement à droite pour les totaux */
+.text-right {
+  text-align: right;
+}
+
+/* Conteneur flexible pour les boutons d'action */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* Suppression des marges pour les formulaires dans les actions */
+.actions form {
+  margin: 0;
+}
+
+/* Style spécifique pour les boutons d'avertissement */
+.button.warning {
+  background-color: #ffc107;
+  color: #856404;
+}
+
+.button.warning:hover {
+  background-color: #e0a800;
+}
+
+/* Style pour les messages d'information */
+.info-message {
+  background-color: #e7f3ff;
+  border-left: 4px solid #007BFF;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.info-message p {
+  margin: 0;
+  color: #0056b3;
+}

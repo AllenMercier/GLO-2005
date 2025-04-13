@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="session-id" content="{{ session.get('_id', '') }}">
+    <title>{% block title %}Location de Jeux Vidéo{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="promo-banner">
+        <p>Livraison gratuite pour toutes les commandes de 100$ et plus avant taxes !</p>
+    </div>
+    
+    <header>
+        <div class="header-content">
+            <div class="logo">LOGO</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Rechercher un jeu…">
+                <button>Rechercher</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('main') }}">Accueil</a></li>
+                    <li><a href="{{ url_for('acheter') }}">Acheter</a></li>
+                    {% if session.get('user_email') %}
+                        <li><a href="{{ url_for('panier') }}">Panier <span id="cart-count">0</span></a></li>
+                        {% if 'user_email' in session %}
+                            <li><a href="{{ url_for('mes_locations') }}">Mes Locations</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Se connecter</a></li>
+                        <li><a href="{{ url_for('register') }}">Inscription</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="lang-currency">
+                <select>
+                    <option>Français</option>
+                    <option>English</option>
+                </select>
+                <select>
+                    <option>CAD</option>
+                    <option>USD</option>
+                </select>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Dans votre template base.html, assurez-vous d'avoir cette section pour afficher les messages flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">
+              {{ message }}
+              <button class="close-button" onclick="this.parentElement.remove()">×</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <div class="page-content">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 – Location de Jeux Vidéo. Tous droits réservés.</p>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='cart.js') }}"></script>
+    
+    <script>
+        // Script d'initialisation pour synchroniser le localStorage et la session
+        document.addEventListener('DOMContentLoaded', function() {
+            // Récupérer les données du panier depuis localStorage
+            let cartData = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            // Si le panier est vide dans localStorage mais que le compteur semble indiquer des articles
+            // (désynchronisation), réinitialiser le stockage local
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartData.length === 0 && parseInt(cartCountElement.textContent) > 0) {
+                console.log("Détection d'une désynchronisation du panier - réinitialisation");
+                localStorage.setItem('cart', '[]');
+                cartCountElement.textContent = '0';
+                
+                // Informer le serveur de la réinitialisation
+                fetch('/vider-panier-api', { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Session panier synchronisée avec localStorage');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur réseau lors de la synchronisation:', error);
+                    });
+            } else {
+                // S'assurer que le compteur est à jour avec localStorage
+                let count = 0;
+                for (let item of cartData) {
+                    count += item.quantity || 0;
+                }
+                cartCountElement.textContent = count;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Mes Locations{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <!-- Assurez-vous que locations.css est chargé en dernier -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='locations.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="page-title">Mes Locations</h1>
+  
+  {% set late_locations = locations|selectattr('status', 'eq', 'en retard')|list %}
+  
+  <!-- Afficher un message d'alerte si il y a des locations en retard -->
+  {% if late_locations %}
+    <div class="warning-message">
+      <p><strong>Attention :</strong> Vous avez {{ late_locations|length }} location(s) en retard. Des pénalités de retard s'appliquent.</p>
+      <div class="warning-actions">
+        <a href="{{ url_for('payer_penalites') }}" class="button warning">Payer les pénalités</a>
+      </div>
+    </div>
+  {% endif %}
+  
+  {% if locations %}
+    <div class="content-section">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Jeu</th>
+            <th>Quantité</th>
+            <th>Date de début</th>
+            <th>Date de retour prévue</th>
+            <th>Prix total</th>
+            <th>Statut</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for location in locations %}
+            <tr class="status-{{ location.status }}">
+              <td>{{ location.nom_jeu }}</td>
+              <td>{{ location.Quantite }}</td>
+              <td>{{ location.Date_debut.strftime('%d/%m/%Y') if location.Date_debut else '' }}</td>
+              <td>{{ location.Date_retour_prevu.strftime('%d/%m/%Y') if location.Date_retour_prevu else '' }}</td>
+              <td>{{ "%.2f"|format(location.prix_location) }} $</td>
+              <td>
+                <span class="pill pill-{{ location.status }}">
+                  {{ location.status }}
+                  {% if location.status == 'terminee' %}
+                    (retourné le {{ location.Date_retournee.strftime('%d/%m/%Y') }})
+                  {% endif %}
+                </span>
+              </td>
+              <td>
+                {% if location.status == 'active' or location.status == 'en retard' %}
+                  <form action="{{ url_for('retourner_location') }}" method="post" class="retour-form">
+                    <input type="hidden" name="id_location" value="{{ location.id_location }}">
+                    <button type="submit" class="button secondary button-small">Retourner</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="aucun-jeu">Vous n'avez pas encore de location.</p>
+    <div class="card-actions" style="width: 300px; margin: 20px auto;">
+      <a href="{{ url_for('acheter') }}" class="button">Parcourir les jeux disponibles</a>
+    </div>
+  {% endif %}
+</main>
+
+{% endblock %}

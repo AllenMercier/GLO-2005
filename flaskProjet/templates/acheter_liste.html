@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Acheter des Jeux Vidéo{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="page-title">Acheter des Jeux Vidéo</h1>
+  <div class="cards-grid">
+    {% for categorie, jeux in jeux_par_categorie.items() %}
+      {% for jeu in jeux %}
+        <div class="card" data-cat="{{ categorie }}">
+          <div class="card-image">
+            <div class="placeholder-img">Image</div>
+          </div>
+          <div class="card-content">
+            <h3>{{ jeu.Nom }}</h3>
+            <p class="price">{{ jeu.Prix }} $</p>
+            <p class="stock">Stock : {{ jeu.Quantite }}</p>
+            <div class="card-actions">
+              <form action="{{ url_for('acheter_detail', id=jeu.id_jeu) }}" method="post">
+                <button type="submit" class="button">Acheter</button>
+              </form>
+              <button onclick="addToCart('{{ jeu.id_jeu }}', '{{ jeu.Nom }}', {{ jeu.Prix }}, {{ jeu.Quantite }})" class="button secondary">
+                Ajouter au panier
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</main>
+
+<!-- Inclusion du JavaScript externe -->
+<script src="{{ url_for('static', filename='cart.js') }}"></script>
+{% endblock %}

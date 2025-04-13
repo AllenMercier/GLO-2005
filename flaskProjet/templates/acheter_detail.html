@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Achat de {{ jeu.Nom }}{% endblock %}
+{% block content %}
+<main>
+  <div class="detail-container">
+    <h1>{{ jeu.Nom }}</h1>
+    <p><strong>Catégorie :</strong> {{ jeu.Categorie }}</p>
+    <p><strong>Prix :</strong> {{ jeu.Prix }} $</p>
+    <p><strong>Stock :</strong> {{ jeu.Quantite }}</p>
+    <form method="POST">
+      <label for="quantite">Quantité :</label><br>
+      <input type="number" id="quantite" name="quantite" min="1" max="{{ jeu.Quantite }}" required>
+      <br><br>
+      <button type="submit" class="button">Acheter</button>
+    </form>
+    <div class="product-actions">
+      <form action="{{ url_for('ajouter_au_panier', id=jeu.id_jeu) }}" method="post">
+        <button type="submit" class="button">Ajouter au panier</button>
+      </form>
+    </div>
+    <p style="margin-top:15px;">
+      <a class="button small" href="{{ url_for('acheter', cat=current_cat) }}">← Retour</a>
+    </p>
+  </div>
+</main>
+{% endblock %}

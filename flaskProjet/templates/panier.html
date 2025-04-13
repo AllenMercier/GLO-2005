@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Votre Panier{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/locations.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="page-title">Votre Panier</h1>
+  
+  <div class="info-message" id="limite-panier">
+    <p><i class="fas fa-info-circle"></i> Note: Maximum 5 articles au total dans le panier.</p>
+  </div>
+  
+  <div class="info-message">
+    <p><strong>Information:</strong> Les prix indiqués sont pour une location de 2 jours.</p>
+  </div>
+  
+  <div id="panier-content" class="content-section">
+    <table id="panier-table" class="data-table">
+      <thead>
+        <tr>
+          <th>Jeu</th>
+          <th>Prix par jour</th>
+          <th>Prix pour 2 jours</th>
+          <th>Quantité</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="panier-items">
+        <!-- Les articles du panier seront ajoutés ici via JavaScript -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="text-right"><strong>Total pour 2 jours:</strong></td>
+          <td id="panier-total">0.00 $</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+    
+    <div class="actions">
+      <button onclick="viderPanier()" class="button secondary">Vider le panier</button>
+      <form id="checkout-form" action="{{ url_for('paiement') }}" method="post" style="display: inline;">
+        <input type="hidden" name="confirm_panier" value="1">
+        <!-- Les éléments du panier seront ajoutés ici dynamiquement -->
+        <div id="hidden-items-container"></div>
+        <button type="submit" class="button" id="checkout-button">
+          Procéder au paiement
+        </button>
+      </form>
+    </div>
+  </div>
+  
+  <div id="panier-vide" style="display: none;">
+    <p class="aucun-jeu">Votre panier est vide.</p>
+    <div class="card-actions">
+      <a href="{{ url_for('acheter') }}" class="button">Parcourir les jeux disponibles</a>
+    </div>
+  </div>
+</main>
+
+<!-- Inclusion du fichier JavaScript externe -->
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+<script src="{{ url_for('static', filename='panier.js') }}"></script>
+{% endblock %}

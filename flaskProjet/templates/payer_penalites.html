@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Payer les Pénalités - Location de Jeux Vidéo{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='warning.css') }}">
+{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="page-title">Paiement des Pénalités de Retard</h1>
+  
+  <div class="warning-message">
+    <p><strong>Attention :</strong> Vous avez des locations en retard. Veuillez payer les pénalités pour continuer à naviguer sur le site.</p>
+  </div>
+  
+  <div class="content-section">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Jeu</th>
+          <th>Date de retour prévue</th>
+          <th>Jours de retard</th>
+          <th>Quantité</th>
+          <th>Pénalité</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for late in late_returns %}
+          <tr class="status-en-retard">
+            <td>{{ late.nom_jeu }}</td>
+            <td>{{ late.Date_retour_prevu.strftime('%d/%m/%Y') if late.Date_retour_prevu else 'N/A' }}</td>
+            <td>{{ late.jours_retard }} jour(s)</td>
+            <td>{{ late.Quantite }}</td>
+            <td>{{ "%.2f"|format(late.penalite) }} $</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="text-right"><strong>Total à payer :</strong></td>
+          <td><strong>{{ "%.2f"|format(total_penalites) }} $</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+    
+    <div class="actions">
+      <form action="{{ url_for('proceder_paiement_penalites') }}" method="post">
+        <button type="submit" class="button">Procéder au paiement</button>
+      </form>
+      <a href="{{ url_for('mes_locations') }}" class="button secondary">Retourner mes jeux</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
