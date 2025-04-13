@@ -15,6 +15,19 @@ Créez un fichier .env à la racine du projet, puis ajoutez-y les variables suiv
     PASSWORD=votre-mot-de-passe
     DATABASE=votre-base-de-données
     PORT=port-de-la-base-de-données
+    
+    # Configuration Stripe pour les paiements
+    STRIPE_SECRET_KEY=votre-clé-secrète-stripe
+    STRIPE_PUBLISHABLE_KEY=votre-clé-publique-stripe
+
+## 💳 Configuration de Stripe
+1. Créez un compte sur [Stripe](https://stripe.com)
+2. Récupérez vos clés API dans la section Dashboard > Developers > API keys
+3. Ajoutez ces clés dans votre fichier .env comme indiqué ci-dessus
+4. En mode développement, vous pouvez utiliser les cartes de test suivantes :
+   - Numéro: 4242 4242 4242 4242
+   - Date: n'importe quelle date future
+   - CVC: n'importe quel code à 3 chiffres
 
 ## 🚀 Lancement de l'application
 Exécutez l'application Flask avec la commande suivante :
@@ -24,6 +37,6 @@ Exécutez l'application Flask avec la commande suivante :
 ## 🌐 Accès à l'application
 Ouvrez votre navigateur et accédez à :
 
-    http://127.0.0.1:5000
+    http://127.0.0.1:8080
 </code></pre>
 </div>
