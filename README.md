@@ -17,8 +17,8 @@ Créez un fichier .env à la racine du projet, puis ajoutez-y les variables suiv
     PORT=port-de-la-base-de-données
     
     # Configuration Stripe pour les paiements
-    STRIPE_SECRET_KEY=votre-clé-secrète-stripe
-    STRIPE_PUBLISHABLE_KEY=votre-clé-publique-stripe
+    STRIPE_SECRET_KEY=
+    STRIPE_PUBLISHABLE_KEY=
 
 ## 💳 Configuration de Stripe
 1. Créez un compte sur [Stripe](https://stripe.com)
@@ -28,6 +28,7 @@ Créez un fichier .env à la racine du projet, puis ajoutez-y les variables suiv
    - Numéro: 4242 4242 4242 4242
    - Date: n'importe quelle date future
    - CVC: n'importe quel code à 3 chiffres
+   
 
 ## 🗄️ Initialisation de la base de données
 Avant de lancer l'application, il faut initialiser la base de données avec les tables requises et les données de test :
